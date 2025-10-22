@@ -1,0 +1,38 @@
+{
+  "name": "hidden-party-echoes",
+  "version": "1.0.0",
+  "description": "Transform your audio to sound like it's coming from another room at a party",
+  "main": "hidden-party-echoes.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "dev": "live-server --port=8000",
+    "serve": "http-server -p 8000 -c-1"
+  },
+  "keywords": [
+    "audio",
+    "processing",
+    "web-audio-api",
+    "party",
+    "effects",
+    "reverb",
+    "muffling",
+    "music"
+  ],
+  "author": "Scott Hardy",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sdh1007/hidden-party-echoes.git"
+  },
+  "homepage": "https://github.com/sdh1007/hidden-party-echoes#readme",
+  "bugs": {
+    "url": "https://github.com/sdh1007/hidden-party-echoes/issues"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
