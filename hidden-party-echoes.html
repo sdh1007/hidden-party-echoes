@@ -1,0 +1,4471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hidden Party Echoes - Audio Muffling Tool</title>
+    <!-- Modern Sans-Serif Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Typography */
+            --font-primary: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+            --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+            
+            /* Colors */
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-light: #8b9cf7;
+            --primary-dark: #4c63d2;
+            --accent-cyan: #06b6d4;
+            --accent-pink: #ec4899;
+            --glassmorphism: rgba(255, 255, 255, 0.1);
+            --glassmorphism-border: rgba(255, 255, 255, 0.2);
+            
+            /* Semantic colors */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+            
+            /* Neutrals */
+            --neutral-50: #f9fafb;
+            --neutral-100: #f3f4f6;
+            --neutral-200: #e5e7eb;
+            --neutral-300: #d1d5db;
+            --neutral-400: #9ca3af;
+            --neutral-500: #6b7280;
+            --neutral-600: #4b5563;
+            --neutral-700: #374151;
+            --neutral-800: #1f2937;
+            --neutral-900: #111827;
+            
+            /* Spacing */
+            --space-xs: 8px;
+            --space-sm: 12px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            --space-2xl: 48px;
+            
+            /* Border radius */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.2);
+            
+            /* Typography */
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            --font-size-4xl: 2.25rem;
+            
+            /* Focus outline */
+            --focus-ring: 2px solid var(--primary-light);
+            --focus-ring-offset: 2px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Focus styles for accessibility */
+        *:focus {
+            outline: var(--focus-ring);
+            outline-offset: var(--focus-ring-offset);
+        }
+
+        *:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        /* Utility classes */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            padding: clamp(16px, 3vw, 32px);
+            color: var(--neutral-700);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--radius-xl);
+            padding: clamp(32px, 6vw, 64px);
+            box-shadow: 
+                0 32px 64px rgba(0, 0, 0, 0.12),
+                0 0 0 1px var(--glassmorphism-border);
+            backdrop-filter: blur(24px);
+            border: 1px solid var(--glassmorphism-border);
+            margin: auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: clamp(48px, 8vw, 72px);
+        }
+
+        .header h1 {
+            font-family: var(--font-primary);
+            font-size: clamp(2.5rem, 6vw, 3.5rem);
+            background: linear-gradient(135deg, var(--primary-dark), var(--accent-pink), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: var(--space-md);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            color: var(--neutral-500);
+            font-size: clamp(1rem, 2.5vw, 1.125rem);
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+
+        .upload-section {
+            margin-bottom: clamp(48px, 8vw, 64px);
+        }
+
+        .drop-zone {
+            border: 2px dashed var(--glassmorphism-border);
+            border-radius: var(--radius-lg);
+            padding: clamp(48px, 8vw, 80px) clamp(20px, 4vw, 40px);
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            background: var(--glassmorphism);
+            backdrop-filter: blur(12px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .drop-zone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--glassmorphism), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .drop-zone:hover::before,
+        .drop-zone.dragover::before {
+            opacity: 1;
+        }
+
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.1),
+                0 0 30px rgba(6, 182, 212, 0.2);
+        }
+
+        .drop-zone-icon {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: var(--space-lg);
+            background: linear-gradient(135deg, var(--primary-dark), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .drop-zone-text {
+            font-family: var(--font-primary);
+            font-size: clamp(1.125rem, 3vw, 1.375rem);
+            color: var(--neutral-700);
+            margin-bottom: var(--space-sm);
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .drop-zone-subtext {
+            font-size: clamp(0.875rem, 2vw, 1rem);
+            color: var(--neutral-500);
+            font-weight: 400;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .controls-section {
+            display: none;
+            margin-bottom: clamp(32px, 5vw, 48px);
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: clamp(24px, 4vw, 32px);
+            border: 1px solid #e9ecef;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: clamp(20px, 4vw, 32px);
+            margin-bottom: clamp(24px, 4vw, 32px);
+        }
+
+        .control-group {
+            background: white;
+            padding: clamp(16px, 3vw, 24px);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid #f1f3f5;
+            transition: all 0.2s ease;
+        }
+
+        .control-group:focus-within {
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+            border-color: #667eea;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-lg);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .preset-btn {
+            padding: var(--space-xs) var(--space-md);
+            border: 2px solid var(--neutral-300);
+            border-radius: var(--radius-lg);
+            background: white;
+            color: var(--neutral-700);
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .preset-btn:hover {
+            border-color: var(--primary-light);
+            background: color-mix(in srgb, var(--primary-light) 5%, white);
+            transform: translateY(-1px);
+        }
+
+        .preset-btn.active {
+            border-color: var(--primary-dark);
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Real-time Preview Controls */
+        .preview-controls {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e6f3ff 100%);
+            border: 2px solid var(--primary-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-lg);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: var(--space-md);
+        }
+
+        .preview-toggle {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 32px;
+            background: var(--neutral-300);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            outline: none;
+        }
+
+        .toggle-switch.active {
+            background: var(--primary-gradient);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 28px;
+            height: 28px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(28px);
+        }
+
+        .preview-duration-control {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            min-width: 200px;
+        }
+
+        .duration-slider {
+            flex: 1;
+            height: 6px;
+            background: var(--neutral-200);
+            border-radius: var(--radius-sm);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .duration-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .duration-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            cursor: pointer;
+            border: none;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .preview-status {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-size: var(--font-size-sm);
+            color: var(--neutral-600);
+        }
+
+        .preview-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--neutral-400);
+            transition: all 0.3s ease;
+        }
+
+        .preview-indicator.active {
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .smart-presets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: var(--space-sm);
+            margin-bottom: var(--space-lg);
+        }
+
+        .smart-preset-btn {
+            padding: var(--space-md) var(--space-sm);
+            border: 1px solid var(--glassmorphism-border);
+            border-radius: var(--radius-md);
+            background: var(--glassmorphism);
+            backdrop-filter: blur(8px);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+            min-height: 90px;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .smart-preset-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-pink));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .smart-preset-btn:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                0 12px 24px rgba(0, 0, 0, 0.15),
+                0 0 20px rgba(6, 182, 212, 0.2);
+        }
+
+        .smart-preset-btn:hover::before {
+            opacity: 0.1;
+        }
+
+        .smart-preset-btn.active {
+            border-color: var(--primary-dark);
+            background: var(--primary-gradient);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .smart-preset-btn.active::before {
+            opacity: 0;
+        }
+
+        .preset-icon {
+            font-size: clamp(1.25rem, 3vw, 1.5rem);
+            margin-bottom: var(--space-xs);
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+            z-index: 1;
+            position: relative;
+        }
+
+        .preset-name {
+            font-family: var(--font-primary);
+            font-weight: 600;
+            font-size: clamp(0.75rem, 2vw, 0.875rem);
+            z-index: 1;
+            position: relative;
+        }
+
+        .preset-description {
+            font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+            opacity: 0.8;
+            line-height: 1.3;
+            z-index: 1;
+            position: relative;
+        }
+
+        /* Mobile optimization for new controls */
+        @media (max-width: 768px) {
+            .preview-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .preview-duration-control {
+                min-width: auto;
+                justify-content: space-between;
+            }
+
+            .smart-presets {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: var(--space-xs);
+            }
+
+            .smart-preset-btn {
+                min-height: 70px;
+                padding: var(--space-sm);
+            }
+        }
+
+        .preset-btn:focus-visible {
+            outline: var(--focus-ring);
+            outline-offset: var(--focus-ring-offset);
+        }
+
+        .reset-btn {
+            background: var(--neutral-100);
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--radius-sm);
+            padding: var(--space-xs);
+            cursor: pointer;
+            color: var(--neutral-600);
+            transition: all 0.2s ease;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-sm);
+            margin-left: var(--space-xs);
+        }
+
+        .reset-btn:hover {
+            background: var(--neutral-200);
+            border-color: var(--neutral-400);
+            color: var(--neutral-700);
+        }
+
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        /* Tooltip System */
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--neutral-800);
+            color: white;
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-xs);
+            line-height: 1.4;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: var(--neutral-800);
+        }
+
+        .tooltip-container:hover .tooltip,
+        .tooltip-container:focus-within .tooltip {
+            opacity: 1;
+        }
+
+        .help-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--neutral-400);
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: var(--space-xs);
+            cursor: help;
+            transition: all 0.2s ease;
+        }
+
+        .help-icon:hover,
+        .help-icon:focus {
+            background: var(--primary-light);
+            transform: scale(1.1);
+        }
+
+        /* Advanced Playback Controls */
+        .playback-master-controls {
+            background: var(--neutral-50);
+            border: 2px solid var(--neutral-200);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-lg);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+
+        .playback-row {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .sync-controls {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .sync-btn {
+            background: var(--neutral-100);
+            border: 2px solid var(--neutral-300);
+            border-radius: var(--radius-md);
+            padding: var(--space-xs) var(--space-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+        }
+
+        .sync-btn.active {
+            background: var(--primary-gradient);
+            border-color: var(--primary-dark);
+            color: white;
+        }
+
+        .sync-btn:hover {
+            border-color: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        .balance-control {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            min-width: 200px;
+        }
+
+        .balance-slider {
+            flex: 1;
+            height: 6px;
+            background: linear-gradient(
+                to right, 
+                var(--primary-light) 0%, 
+                var(--neutral-300) 50%, 
+                var(--success) 100%
+            );
+            border-radius: var(--radius-sm);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .balance-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid var(--neutral-400);
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .balance-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid var(--neutral-400);
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .waveform-container {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .waveform-container:hover {
+            transform: scale(1.02);
+        }
+
+        .waveform-scrubber {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--error);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            z-index: 10;
+        }
+
+        .waveform-container:hover .waveform-scrubber {
+            opacity: 0.8;
+        }
+
+        /* Real-time Visualizations */
+        .visualization-panel {
+            background: var(--glassmorphism);
+            border: 1px solid var(--glassmorphism-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-lg);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .visualization-title {
+            font-family: var(--font-primary);
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            color: var(--neutral-800);
+            margin-bottom: var(--space-lg);
+            text-align: center;
+        }
+
+        .visualization-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-lg);
+        }
+
+        .visualization-item {
+            background: var(--neutral-50);
+            border: 2px solid var(--neutral-200);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            text-align: center;
+        }
+
+        .visualization-item h4 {
+            font-family: var(--font-primary);
+            font-size: var(--font-size-lg);
+            font-weight: 500;
+            color: var(--neutral-700);
+            margin-bottom: var(--space-sm);
+        }
+
+        .visualization-item canvas {
+            width: 100%;
+            height: 200px;
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--radius-sm);
+            background: #000;
+            display: block;
+            margin: 0 auto var(--space-sm);
+        }
+
+        .visualization-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: var(--font-size-xs);
+            color: var(--neutral-500);
+            padding: 0 var(--space-sm);
+        }
+
+        /* Mobile responsiveness for visualizations */
+        @media (max-width: 768px) {
+            .visualization-grid {
+                grid-template-columns: 1fr;
+                gap: var(--space-md);
+            }
+            
+            .visualization-item canvas {
+                height: 150px;
+            }
+        }
+
+        /* Modal and Preset Library Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-lg);
+        }
+
+        .modal-content {
+            background: var(--neutral-50);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 900px;
+            max-height: 80vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-lg);
+            border-bottom: 2px solid var(--neutral-200);
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-family: var(--font-primary);
+            font-size: var(--font-size-2xl);
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-body {
+            padding: var(--space-lg);
+            max-height: calc(80vh - 100px);
+            overflow-y: auto;
+        }
+
+        .library-controls {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .library-search {
+            display: flex;
+            gap: var(--space-sm);
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-input, .category-filter, .sort-filter {
+            padding: var(--space-sm);
+            border: 2px solid var(--neutral-300);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-body);
+            font-size: var(--font-size-sm);
+            transition: border-color 0.2s ease;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-input:focus, .category-filter:focus, .sort-filter:focus {
+            outline: none;
+            border-color: var(--primary-light);
+        }
+
+        .library-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .library-btn {
+            padding: var(--space-sm) var(--space-md);
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-body);
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .library-btn.primary {
+            background: var(--success);
+            color: white;
+        }
+
+        .library-btn.primary:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .library-btn.danger {
+            background: var(--error);
+            color: white;
+        }
+
+        .library-btn.danger:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .preset-card {
+            background: var(--neutral-100);
+            border: 2px solid var(--neutral-200);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            transition: all 0.2s ease;
+        }
+
+        .preset-card:hover {
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .preset-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-sm);
+        }
+
+        .preset-name {
+            font-family: var(--font-primary);
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--neutral-800);
+            margin: 0;
+        }
+
+        .preset-category {
+            background: var(--primary-light);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: var(--font-size-xs);
+            font-weight: 500;
+        }
+
+        .preset-settings {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-xs);
+            margin: var(--space-sm) 0;
+            font-size: var(--font-size-xs);
+            color: var(--neutral-600);
+        }
+
+        .preset-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-sm);
+            font-size: var(--font-size-xs);
+            color: var(--neutral-500);
+        }
+
+        .preset-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .star {
+            color: #fbbf24;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .star:hover, .star.filled {
+            color: #f59e0b;
+        }
+
+        .preset-actions {
+            display: flex;
+            gap: var(--space-xs);
+        }
+
+        .preset-action-btn {
+            flex: 1;
+            padding: var(--space-xs);
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--radius-sm);
+            background: var(--neutral-50);
+            font-size: var(--font-size-xs);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .preset-action-btn:hover {
+            background: var(--neutral-200);
+        }
+
+        .preset-action-btn.apply {
+            background: var(--primary-light);
+            color: white;
+            border-color: var(--primary-dark);
+        }
+
+        .preset-action-btn.apply:hover {
+            background: var(--primary-dark);
+        }
+
+        .empty-library {
+            text-align: center;
+            color: var(--neutral-500);
+            padding: var(--space-2xl);
+            font-style: italic;
+        }
+
+        /* Mobile responsiveness for modal */
+        @media (max-width: 768px) {
+            .modal {
+                padding: var(--space-sm);
+            }
+            
+            .modal-content {
+                max-height: 90vh;
+            }
+            
+            .library-search {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-input {
+                min-width: auto;
+            }
+            
+            .library-actions {
+                flex-direction: column;
+            }
+            
+            .preset-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* High Contrast Theme */
+        .high-contrast {
+            --primary-gradient: linear-gradient(135deg, #000000 0%, #333333 100%);
+            --primary-light: #666666;
+            --primary-dark: #000000;
+            --neutral-50: #ffffff;
+            --neutral-100: #f0f0f0;
+            --neutral-200: #e0e0e0;
+            --neutral-300: #c0c0c0;
+            --neutral-400: #808080;
+            --neutral-500: #606060;
+            --neutral-600: #404040;
+            --neutral-700: #202020;
+            --neutral-800: #101010;
+            --neutral-900: #000000;
+            --success: #00ff00;
+            --error: #ff0000;
+            --warning: #ffff00;
+            --info: #0080ff;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: var(--space-lg);
+            right: var(--space-lg);
+            background: var(--neutral-800);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-lg);
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--neutral-600);
+            transform: scale(1.1);
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .playback-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .sync-controls {
+                justify-content: center;
+            }
+
+            .balance-control {
+                min-width: auto;
+                justify-content: space-between;
+            }
+
+            .theme-toggle {
+                top: var(--space-md);
+                right: var(--space-md);
+                width: 40px;
+                height: 40px;
+            }
+
+            .waveform-container {
+                min-height: 80px;
+                touch-action: pan-x;
+            }
+
+            .tooltip {
+                position: fixed;
+                bottom: 10%;
+                left: 50%;
+                transform: translateX(-50%);
+                white-space: normal;
+                max-width: 280px;
+                text-align: center;
+            }
+        }
+
+        /* Progressive disclosure animations */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in {
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #333;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        .slider-container {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #e9ecef;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .slider-value {
+            font-size: 0.9rem;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: var(--space-md) var(--space-xl);
+            border: none;
+            border-radius: var(--radius-md);
+            font-family: var(--font-primary);
+            font-size: var(--font-size-base);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: -0.01em;
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+            position: relative;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .btn:hover::before {
+            opacity: 1;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn:focus-visible {
+            outline: var(--focus-ring);
+            outline-offset: var(--focus-ring-offset);
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary {
+            background: var(--neutral-500);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--neutral-600);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: var(--shadow-sm) !important;
+        }
+
+        .preview-section {
+            display: none;
+            margin-bottom: 40px;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .preview-item {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .preview-item h3 {
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .waveform {
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f8f9fa;
+        }
+
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .play-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .time-display {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #666;
+            min-width: 100px;
+        }
+
+        .status-section {
+            margin-bottom: 30px;
+        }
+
+        .status-message {
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+            display: none;
+            font-family: var(--font-body);
+            font-weight: 500;
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glassmorphism-border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: currentColor;
+            opacity: 0.6;
+        }
+
+        .status-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #065f46;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .status-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #991b1b;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .status-info {
+            background: rgba(59, 130, 246, 0.1);
+            color: #1e40af;
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .status-warning {
+            background: color-mix(in srgb, var(--warning) 10%, transparent);
+            color: color-mix(in srgb, var(--warning) 80%, black);
+            border: 1px solid color-mix(in srgb, var(--warning) 30%, transparent);
+        }
+
+        .loading-indicator {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid var(--neutral-200);
+            border-top: 4px solid var(--primary-light);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--neutral-200);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            margin: var(--space-md) 0;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-gradient);
+            border-radius: var(--radius-sm);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .progress-indeterminate {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            background: var(--primary-gradient);
+            animation: indeterminate 2s infinite linear;
+            width: 30%;
+        }
+
+        @keyframes indeterminate {
+            0% {
+                left: -30%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .file-info {
+            display: none;
+            background: var(--glassmorphism);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glassmorphism-border);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-xl);
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.4s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .file-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-gradient);
+        }
+
+        .file-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: var(--space-lg);
+            font-size: var(--font-size-sm);
+        }
+
+        .file-info-item {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+            padding: var(--space-md);
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--glassmorphism-border);
+        }
+
+        .file-info-label {
+            font-family: var(--font-primary);
+            font-weight: 600;
+            color: var(--neutral-600);
+            font-size: var(--font-size-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .file-info-value {
+            color: var(--neutral-700);
+            font-weight: 500;
+            font-size: var(--font-size-sm);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .preview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" 
+            id="themeToggle" 
+            aria-label="Toggle high contrast theme"
+            title="Switch to high contrast mode">
+        🌓
+    </button>
+
+    <main class="container" role="main" aria-label="Audio processing application">
+        <header class="header">
+            <h1 id="main-heading">🎵 Hidden Party Echoes</h1>
+            <p>Transform your audio to sound like it's coming from another room at a party</p>
+        </header>
+
+        <section class="upload-section" aria-labelledby="upload-heading">
+            <h2 id="upload-heading" class="visually-hidden">Upload Audio File</h2>
+            <div class="drop-zone" id="dropZone" 
+                 role="button" 
+                 tabindex="0" 
+                 aria-describedby="upload-instructions"
+                 aria-label="Upload audio file by dragging and dropping or clicking to browse">
+                <div class="drop-zone-icon" aria-hidden="true">🎵</div>
+                <div class="drop-zone-text">Drag & Drop Your Audio File Here</div>
+                <div class="drop-zone-subtext" id="upload-instructions">Or click to browse (MP3, WAV, OGG up to 50MB)</div>
+            </div>
+            <input type="file" 
+                   id="fileInput" 
+                   class="file-input" 
+                   accept="audio/*"
+                   aria-label="Choose audio file to process">
+        </section>
+
+        <section class="status-section" aria-labelledby="status-heading">
+            <h2 id="status-heading" class="visually-hidden">Application Status</h2>
+            <div id="statusMessage" class="status-message" role="status" aria-live="polite"></div>
+            <div id="loadingIndicator" class="loading-indicator" role="status" aria-live="polite">
+                <div class="spinner" aria-hidden="true"></div>
+                <div id="loadingText">Processing audio...</div>
+                <div class="progress-bar" aria-hidden="true">
+                    <div class="progress-indeterminate"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="fileInfo" class="file-info" aria-labelledby="file-info-heading">
+            <h2 id="file-info-heading" class="visually-hidden">Audio File Information</h2>
+            <div class="file-info-grid" role="group" aria-label="File details">
+                <div class="file-info-item">
+                    <span class="file-info-label">Name:</span>
+                    <span class="file-info-value" id="fileName" aria-label="File name"></span>
+                </div>
+                <div class="file-info-item">
+                    <span class="file-info-label">Size:</span>
+                    <span class="file-info-value" id="fileSize" aria-label="File size"></span>
+                </div>
+                <div class="file-info-item">
+                    <span class="file-info-label">Duration:</span>
+                    <span class="file-info-value" id="fileDuration" aria-label="Audio duration"></span>
+                </div>
+                <div class="file-info-item">
+                    <span class="file-info-label">Sample Rate:</span>
+                    <span class="file-info-value" id="fileSampleRate" aria-label="Audio sample rate"></span>
+                </div>
+            </div>
+        </section>
+
+        <section id="controlsSection" class="controls-section" aria-labelledby="controls-heading">
+            <h2 id="controls-heading" class="visually-hidden">Audio Processing Controls</h2>
+            
+            <!-- Real-time Preview Controls -->
+            <div class="preview-controls" role="group" aria-label="Real-time preview controls">
+                <div class="preview-header">
+                    <div class="preview-toggle">
+                        <label for="realtimeToggle" class="preview-label">Real-time Preview</label>
+                        <button id="realtimeToggle" 
+                                class="toggle-switch" 
+                                role="switch" 
+                                aria-checked="false"
+                                aria-describedby="realtime-help">
+                            <div class="toggle-slider"></div>
+                        </button>
+                    </div>
+                    
+                    <div class="preview-duration-control">
+                        <span class="duration-label">Preview: </span>
+                        <input type="range" 
+                               id="previewDuration" 
+                               class="duration-slider" 
+                               min="2" 
+                               max="10" 
+                               value="3"
+                               aria-label="Preview duration in seconds">
+                        <span id="durationValue">3s</span>
+                    </div>
+                    
+                    <div class="preview-status">
+                        <div class="preview-indicator" id="previewIndicator"></div>
+                        <span id="previewStatus">Ready</span>
+                    </div>
+                </div>
+                
+                <div class="visually-hidden">
+                    <div id="realtime-help">Toggle real-time preview to hear effects instantly as you adjust parameters</div>
+                </div>
+            </div>
+            
+            <!-- Smart Presets -->
+            <div class="smart-presets" role="group" aria-label="Smart effect presets">
+                <button class="smart-preset-btn" data-preset="neighbors-party" aria-describedby="neighbors-help">
+                    <div class="preset-icon">🏠</div>
+                    <div class="preset-name">Neighbor's Party</div>
+                    <div class="preset-description">Classic apartment wall muffling</div>
+                </button>
+                
+                <button class="smart-preset-btn" data-preset="tv-through-wall" aria-describedby="tv-help">
+                    <div class="preset-icon">📺</div>
+                    <div class="preset-name">TV Through Wall</div>
+                    <div class="preset-description">Muffled television audio</div>
+                </button>
+                
+                <button class="smart-preset-btn" data-preset="distant-concert" aria-describedby="concert-help">
+                    <div class="preset-icon">🎪</div>
+                    <div class="preset-name">Distant Concert</div>
+                    <div class="preset-description">Outdoor venue from afar</div>
+                </button>
+                
+                <button class="smart-preset-btn" data-preset="upstairs-music" aria-describedby="upstairs-help">
+                    <div class="preset-icon">🏢</div>
+                    <div class="preset-name">Upstairs Music</div>
+                    <div class="preset-description">Floor/ceiling transmission</div>
+                </button>
+                
+                <button class="smart-preset-btn" data-preset="car-stereo" aria-describedby="car-help">
+                    <div class="preset-icon">🚗</div>
+                    <div class="preset-name">Car Stereo</div>
+                    <div class="preset-description">Music from parked car</div>
+                </button>
+                
+                <button class="smart-preset-btn" data-preset="bathroom-echo" aria-describedby="bathroom-help">
+                    <div class="preset-icon">🚿</div>
+                    <div class="preset-name">Bathroom Echo</div>
+                    <div class="preset-description">Reverberant small room</div>
+                </button>
+                
+                <button class="smart-preset-btn" data-preset="phone-speaker" aria-describedby="phone-help">
+                    <div class="preset-icon">📱</div>
+                    <div class="preset-name">Phone Speaker</div>
+                    <div class="preset-description">Tinny speaker quality</div>
+                </button>
+                
+                <button class="smart-preset-btn active" data-preset="classic-muffled" aria-describedby="classic-help">
+                    <div class="preset-icon">🔇</div>
+                    <div class="preset-name">Classic Muffled</div>
+                    <div class="preset-description">Balanced party room effect</div>
+                </button>
+            </div>
+            
+            <div class="visually-hidden">
+                <div id="neighbors-help">Perfect for simulating music from the apartment next door</div>
+                <div id="tv-help">Recreates the sound of TV audio coming through a wall</div>
+                <div id="concert-help">Distant outdoor concert or festival sound</div>
+                <div id="upstairs-help">Music playing from the floor above or below</div>
+                <div id="car-help">Car stereo heard from outside the vehicle</div>
+                <div id="bathroom-help">Audio in a small, reverberant bathroom space</div>
+                <div id="phone-help">Audio playing from a phone's built-in speaker</div>
+                <div id="classic-help">The classic hidden party room effect, perfectly balanced</div>
+            </div>
+            
+            <!-- Manual Controls (Legacy) -->
+            <details class="manual-controls" open>
+                <summary style="font-weight: 600; margin-bottom: var(--space-md); cursor: pointer;">Manual Parameter Control</summary>
+            
+            <div class="controls-grid" role="group" aria-label="Audio effect parameters">
+                <div class="control-group">
+                    <label for="lowpassSlider">
+                        Muffle Intensity
+                        <div class="tooltip-container">
+                            <span class="help-icon" tabindex="0" role="button" aria-describedby="lowpass-tooltip">?</span>
+                            <div class="tooltip" id="lowpass-tooltip" role="tooltip">
+                                Controls how much high-frequency sound is filtered out. Lower values = more muffled sound.
+                            </div>
+                        </div>
+                    </label>
+                    <div class="slider-row">
+                        <div class="slider-container">
+                            <input type="range" 
+                                   id="lowpassSlider" 
+                                   class="slider" 
+                                   min="300" 
+                                   max="1200" 
+                                   value="700" 
+                                   step="50"
+                                   aria-describedby="lowpass-help"
+                                   aria-label="Muffle intensity frequency cutoff">
+                        </div>
+                        <button class="reset-btn" 
+                                data-reset="lowpass" 
+                                aria-label="Reset muffle intensity to default"
+                                title="Reset to 700 Hz">
+                            ↺
+                        </button>
+                    </div>
+                    <div class="slider-value" id="lowpass-help">
+                        <span id="lowpassValue" aria-live="polite">700</span> Hz
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label for="reverbSlider">
+                        Room Reverb
+                        <div class="tooltip-container">
+                            <span class="help-icon" tabindex="0" role="button" aria-describedby="reverb-tooltip">?</span>
+                            <div class="tooltip" id="reverb-tooltip" role="tooltip">
+                                Adds echo and spatial depth to simulate sound bouncing off walls in a room.
+                            </div>
+                        </div>
+                    </label>
+                    <div class="slider-row">
+                        <div class="slider-container">
+                            <input type="range" 
+                                   id="reverbSlider" 
+                                   class="slider" 
+                                   min="0" 
+                                   max="100" 
+                                   value="40" 
+                                   step="5"
+                                   aria-describedby="reverb-help"
+                                   aria-label="Room reverb amount percentage">
+                        </div>
+                        <button class="reset-btn" 
+                                data-reset="reverb" 
+                                aria-label="Reset room reverb to default"
+                                title="Reset to 40%">
+                            ↺
+                        </button>
+                    </div>
+                    <div class="slider-value" id="reverb-help">
+                        <span id="reverbValue" aria-live="polite">40</span>%
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="volumeSlider">
+                        Volume Reduction
+                        <div class="tooltip-container">
+                            <span class="help-icon" tabindex="0" role="button" aria-describedby="volume-tooltip">?</span>
+                            <div class="tooltip" id="volume-tooltip" role="tooltip">
+                                Reduces overall volume to simulate distance. Higher values = quieter sound.
+                            </div>
+                        </div>
+                    </label>
+                    <div class="slider-row">
+                        <div class="slider-container">
+                            <input type="range" 
+                                   id="volumeSlider" 
+                                   class="slider" 
+                                   min="10" 
+                                   max="50" 
+                                   value="25" 
+                                   step="5"
+                                   aria-describedby="volume-help"
+                                   aria-label="Volume reduction percentage">
+                        </div>
+                        <button class="reset-btn" 
+                                data-reset="volume" 
+                                aria-label="Reset volume reduction to default"
+                                title="Reset to 25%">
+                            ↺
+                        </button>
+                    </div>
+                    <div class="slider-value" id="volume-help">
+                        <span id="volumeValue" aria-live="polite">25</span>%
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="distortionSlider">
+                        Subtle Distortion
+                        <div class="tooltip-container">
+                            <span class="help-icon" tabindex="0" role="button" aria-describedby="distortion-tooltip">?</span>
+                            <div class="tooltip" id="distortion-tooltip" role="tooltip">
+                                Adds slight audio compression and warmth for more realistic sound transmission.
+                            </div>
+                        </div>
+                    </label>
+                    <div class="slider-row">
+                        <div class="slider-container">
+                            <input type="range" 
+                                   id="distortionSlider" 
+                                   class="slider" 
+                                   min="0" 
+                                   max="20" 
+                                   value="5" 
+                                   step="1"
+                                   aria-describedby="distortion-help"
+                                   aria-label="Distortion amount percentage">
+                        </div>
+                        <button class="reset-btn" 
+                                data-reset="distortion" 
+                                aria-label="Reset distortion to default"
+                                title="Reset to 5%">
+                            ↺
+                        </button>
+                    </div>
+                    <div class="slider-value" id="distortion-help">
+                        <span id="distortionValue" aria-live="polite">5</span>%
+                    </div>
+                </div>
+            </div>
+
+            <div class="buttons" role="group" aria-label="Action buttons">
+                <button id="processBtn" 
+                        class="btn btn-primary" 
+                        aria-describedby="process-help">
+                    <span aria-hidden="true">🎛️</span> Process Audio
+                </button>
+                <button id="resetBtn" 
+                        class="btn btn-secondary"
+                        aria-describedby="reset-help">
+                    <span aria-hidden="true">🔄</span> Reset
+                </button>
+            </div>
+            <div class="visually-hidden">
+                <div id="process-help">Apply the current settings to transform your audio</div>
+                <div id="reset-help">Clear the current audio file and reset all settings</div>
+            </div>
+        </section>
+
+        <section id="previewSection" class="preview-section" aria-labelledby="preview-heading">
+            <h2 id="preview-heading" class="visually-hidden">Audio Comparison and Download</h2>
+            
+            <!-- Advanced Playback Controls -->
+            <div class="playback-master-controls" role="group" aria-label="Advanced playback controls">
+                <div class="playback-row">
+                    <div class="sync-controls">
+                        <button id="syncPlayBtn" 
+                                class="sync-btn" 
+                                aria-describedby="sync-help"
+                                title="Play both audio files simultaneously">
+                            🎭 Sync Play
+                        </button>
+                        <button id="abToggleBtn" 
+                                class="sync-btn" 
+                                aria-describedby="ab-help"
+                                title="Quick switch between original and processed">
+                            ⚡ A/B Toggle
+                        </button>
+                        <button id="sharePresetBtn" 
+                                class="sync-btn" 
+                                aria-describedby="share-help"
+                                title="Share your custom preset settings">
+                            🔗 Share Preset
+                        </button>
+                        <button id="libraryBtn" 
+                                class="sync-btn" 
+                                aria-describedby="library-help"
+                                title="Browse and manage community presets">
+                            📚 Preset Library
+                        </button>
+                    </div>
+                    
+                    <div class="balance-control" aria-label="Volume balance between original and processed">
+                        <span class="balance-label">Original</span>
+                        <input type="range" 
+                               id="balanceSlider" 
+                               class="balance-slider" 
+                               min="0" 
+                               max="100" 
+                               value="50"
+                               aria-label="Balance between original and processed audio">
+                        <span class="balance-label">Processed</span>
+                    </div>
+                </div>
+                
+                <div class="visually-hidden">
+                    <div id="sync-help">Play both audio files at the same time for direct comparison</div>
+                    <div id="ab-help">Instantly switch between original and processed audio</div>
+                    <div id="share-help">Generate a shareable URL with your current preset settings</div>
+                    <div id="library-help">Browse, save, and load community-created presets</div>
+                </div>
+            </div>
+            
+            <!-- Real-time Audio Visualizations -->
+            <div class="visualization-panel" role="region" aria-label="Audio visualizations">
+                <h3 class="visualization-title">📊 Real-time Audio Analysis</h3>
+                <div class="visualization-grid">
+                    <div class="visualization-item">
+                        <h4>Frequency Spectrum</h4>
+                        <canvas id="frequencyCanvas" width="400" height="200" aria-label="Frequency spectrum visualization"></canvas>
+                        <div class="visualization-labels">
+                            <span>Low</span>
+                            <span>Mid</span>
+                            <span>High</span>
+                        </div>
+                    </div>
+                    <div class="visualization-item">
+                        <h4>Waveform</h4>
+                        <canvas id="waveformCanvas" width="400" height="200" aria-label="Audio waveform visualization"></canvas>
+                        <div class="visualization-labels">
+                            <span>-1</span>
+                            <span>0</span>
+                            <span>+1</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="preview-grid">
+                <div class="preview-item">
+                    <h3 id="original-heading">
+                        <span aria-hidden="true">🎵</span> Original Audio
+                    </h3>
+                    <div class="waveform-container" 
+                         data-audio="original" 
+                         role="slider" 
+                         aria-label="Original audio scrubber"
+                         tabindex="0">
+                        <div id="originalWaveform" 
+                             class="waveform" 
+                             role="img" 
+                             aria-labelledby="original-heading"
+                             aria-describedby="original-description">
+                        </div>
+                        <div class="waveform-scrubber" id="originalScrubber"></div>
+                    </div>
+                    <div id="original-description" class="visually-hidden">
+                        Waveform visualization of the original uploaded audio file
+                    </div>
+                    <div class="audio-controls" role="group" aria-label="Original audio playback controls">
+                        <button id="playOriginal" 
+                                class="play-btn" 
+                                aria-label="Play original audio"
+                                aria-describedby="original-time">
+                            ▶️
+                        </button>
+                        <div id="originalTime" 
+                             class="time-display" 
+                             aria-live="polite"
+                             aria-label="Original audio time">
+                             00:00 / 00:00
+                        </div>
+                    </div>
+                </div>
+
+                <div class="preview-item">
+                    <h3 id="processed-heading">
+                        <span aria-hidden="true">🏠</span> Through the Wall
+                    </h3>
+                    <div class="waveform-container" 
+                         data-audio="processed" 
+                         role="slider" 
+                         aria-label="Processed audio scrubber"
+                         tabindex="0">
+                        <div id="processedWaveform" 
+                             class="waveform" 
+                             role="img" 
+                             aria-labelledby="processed-heading"
+                             aria-describedby="processed-description">
+                        </div>
+                        <div class="waveform-scrubber" id="processedScrubber"></div>
+                    </div>
+                    <div id="processed-description" class="visually-hidden">
+                        Waveform visualization of the processed audio with party room effects
+                    </div>
+                    <div class="audio-controls" role="group" aria-label="Processed audio playback controls">
+                        <button id="playProcessed" 
+                                class="play-btn" 
+                                aria-label="Play processed audio"
+                                aria-describedby="processed-time">
+                            ▶️
+                        </button>
+                        <div id="processedTime" 
+                             class="time-display" 
+                             aria-live="polite"
+                             aria-label="Processed audio time">
+                             00:00 / 00:00
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="buttons" role="group" aria-label="Download actions">
+                <button id="downloadBtn" 
+                        class="btn btn-primary" 
+                        disabled
+                        aria-describedby="download-help">
+                    <span aria-hidden="true">💾</span> Download Processed Audio
+                </button>
+            </div>
+            <div class="visually-hidden">
+                <div id="download-help">Download the processed audio file as a WAV file</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Preset Library Modal -->
+    <div id="presetLibraryModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📚 Preset Library</h2>
+                <button class="modal-close" id="closeLibrary">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="library-controls">
+                    <div class="library-search">
+                        <input type="text" id="presetSearch" placeholder="Search presets..." class="search-input">
+                        <select id="categoryFilter" class="category-filter">
+                            <option value="">All Categories</option>
+                            <option value="Party">Party</option>
+                            <option value="Ambient">Ambient</option>
+                            <option value="Dramatic">Dramatic</option>
+                            <option value="Subtle">Subtle</option>
+                            <option value="Extreme">Extreme</option>
+                            <option value="Custom">Custom</option>
+                        </select>
+                        <select id="sortFilter" class="sort-filter">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="popular">Most Popular</option>
+                            <option value="rating">Highest Rated</option>
+                        </select>
+                    </div>
+                    
+                    <div class="library-actions">
+                        <button id="saveCurrentPreset" class="library-btn primary">💾 Save Current</button>
+                        <button id="clearAllPresets" class="library-btn danger">🗑️ Clear All</button>
+                    </div>
+                </div>
+                
+                <div id="presetGrid" class="preset-grid">
+                    <!-- Presets will be dynamically loaded here -->
+                </div>
+                
+                <div id="emptyLibrary" class="empty-library" style="display: none;">
+                    <p>No presets found. Create your first preset by adjusting the settings and clicking "Save Current"!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class HiddenPartyEchoes {
+            constructor() {
+                this.audioContext = null;
+                this.originalBuffer = null;
+                this.processedBuffer = null;
+                this.originalAudioElement = null;
+                this.processedAudioElement = null;
+                this.isProcessing = false;
+                this.currentPreset = 'moderate';
+                this.syncMode = false;
+                this.abToggleState = 'original'; // 'original' or 'processed'
+                this.isHighContrast = false;
+                
+                // Real-time visualization properties
+                this.analyser = null;
+                this.frequencyData = null;
+                this.timeData = null;
+                this.animationId = null;
+                this.isVisualizationActive = false;
+                
+                // Real-time preview state
+                this.realtimeEnabled = false;
+                this.previewDuration = 5; // seconds
+                this.previewBuffer = null;
+                this.isPreviewProcessing = false;
+                this.previewStartTime = 0;
+                
+                // Smart presets definitions
+                this.smartPresets = {
+                    'neighbors-party': {
+                        name: "Neighbor's Party",
+                        icon: '🏠',
+                        description: 'Music from next door',
+                        settings: { lowpass: 800, reverb: 30, volume: 20, distortion: 3 }
+                    },
+                    'tv-through-wall': {
+                        name: "TV Through Wall",
+                        icon: '📺',
+                        description: 'Television in another room',
+                        settings: { lowpass: 600, reverb: 15, volume: 35, distortion: 8 }
+                    },
+                    'distant-concert': {
+                        name: "Distant Concert",
+                        icon: '🎵',
+                        description: 'Music from far away venue',
+                        settings: { lowpass: 400, reverb: 80, volume: 50, distortion: 2 }
+                    },
+                    'upstairs-music': {
+                        name: "Upstairs Music",
+                        icon: '⬆️',
+                        description: 'Sound from floor above',
+                        settings: { lowpass: 750, reverb: 45, volume: 25, distortion: 4 }
+                    },
+                    'car-stereo': {
+                        name: "Car Stereo",
+                        icon: '🚗',
+                        description: 'Music from passing car',
+                        settings: { lowpass: 650, reverb: 25, volume: 40, distortion: 15 }
+                    },
+                    'bathroom-echo': {
+                        name: "Bathroom Echo",
+                        icon: '🚿',
+                        description: 'Sound in tiled space',
+                        settings: { lowpass: 900, reverb: 90, volume: 15, distortion: 1 }
+                    },
+                    'phone-speaker': {
+                        name: "Phone Speaker",
+                        icon: '📱',
+                        description: 'Audio from phone speaker',
+                        settings: { lowpass: 500, reverb: 10, volume: 30, distortion: 20 }
+                    },
+                    'classic-muffled': {
+                        name: "Classic Muffled",
+                        icon: '🎧',
+                        description: 'Traditional wall effect',
+                        settings: { lowpass: 700, reverb: 40, volume: 25, distortion: 5 }
+                    }
+                };
+                
+                // Preset definitions (keeping for backward compatibility)
+                this.presets = {
+                    subtle: {
+                        lowpass: 900,
+                        reverb: 20,
+                        volume: 15,
+                        distortion: 2
+                    },
+                    moderate: {
+                        lowpass: 700,
+                        reverb: 40,
+                        volume: 25,
+                        distortion: 5
+                    },
+                    heavy: {
+                        lowpass: 500,
+                        reverb: 70,
+                        volume: 40,
+                        distortion: 12
+                    },
+                    custom: null // Will use current slider values
+                };
+                
+                // Default values for reset functionality
+                this.defaults = {
+                    lowpass: 700,
+                    reverb: 40,
+                    volume: 25,
+                    distortion: 5
+                };
+                
+                this.initializeElements();
+                this.initializeEventListeners();
+                this.initializeAudioContext();
+                this.initializeVisualization();
+                this.loadUserPreferences();
+                this.loadSharedPreset();
+            }
+
+            initializeElements() {
+                this.elements = {
+                    dropZone: document.getElementById('dropZone'),
+                    fileInput: document.getElementById('fileInput'),
+                    controlsSection: document.getElementById('controlsSection'),
+                    previewSection: document.getElementById('previewSection'),
+                    statusMessage: document.getElementById('statusMessage'),
+                    loadingIndicator: document.getElementById('loadingIndicator'),
+                    loadingText: document.getElementById('loadingText'),
+                    fileInfo: document.getElementById('fileInfo'),
+                    
+                    // File info
+                    fileName: document.getElementById('fileName'),
+                    fileSize: document.getElementById('fileSize'),
+                    fileDuration: document.getElementById('fileDuration'),
+                    fileSampleRate: document.getElementById('fileSampleRate'),
+                    
+                    // Controls
+                    lowpassSlider: document.getElementById('lowpassSlider'),
+                    reverbSlider: document.getElementById('reverbSlider'),
+                    volumeSlider: document.getElementById('volumeSlider'),
+                    distortionSlider: document.getElementById('distortionSlider'),
+                    
+                    lowpassValue: document.getElementById('lowpassValue'),
+                    reverbValue: document.getElementById('reverbValue'),
+                    volumeValue: document.getElementById('volumeValue'),
+                    distortionValue: document.getElementById('distortionValue'),
+                    
+                    // Buttons
+                    processBtn: document.getElementById('processBtn'),
+                    resetBtn: document.getElementById('resetBtn'),
+                    downloadBtn: document.getElementById('downloadBtn'),
+                    playOriginal: document.getElementById('playOriginal'),
+                    playProcessed: document.getElementById('playProcessed'),
+                    
+                    // Time displays
+                    originalTime: document.getElementById('originalTime'),
+                    processedTime: document.getElementById('processedTime'),
+                    
+                    // Preset buttons
+                    presetButtons: document.querySelectorAll('.preset-btn'),
+                    
+                    // Reset buttons
+                    resetButtons: document.querySelectorAll('.reset-btn'),
+                    
+                    // Advanced controls
+                    themeToggle: document.getElementById('themeToggle'),
+                    syncPlayBtn: document.getElementById('syncPlayBtn'),
+                    abToggleBtn: document.getElementById('abToggleBtn'),
+                    sharePresetBtn: document.getElementById('sharePresetBtn'),
+                    libraryBtn: document.getElementById('libraryBtn'),
+                    balanceSlider: document.getElementById('balanceSlider'),
+                    
+                    // Waveform containers and scrubbers
+                    waveformContainers: document.querySelectorAll('.waveform-container'),
+                    originalScrubber: document.getElementById('originalScrubber'),
+                    processedScrubber: document.getElementById('processedScrubber'),
+                    
+                    // Real-time preview controls
+                    realtimeToggle: document.getElementById('realtimeToggle'),
+                    previewDurationSlider: document.getElementById('previewDurationSlider'),
+                    previewDurationValue: document.getElementById('previewDurationValue'),
+                    previewStatus: document.getElementById('previewStatus'),
+                    
+                    // Smart preset buttons
+                    smartPresetButtons: document.querySelectorAll('.smart-preset-btn'),
+                    
+                    // Visualization canvases
+                    frequencyCanvas: document.getElementById('frequencyCanvas'),
+                    waveformCanvas: document.getElementById('waveformCanvas'),
+                    
+                    // Preset library modal
+                    presetLibraryModal: document.getElementById('presetLibraryModal'),
+                    closeLibrary: document.getElementById('closeLibrary'),
+                    presetSearch: document.getElementById('presetSearch'),
+                    categoryFilter: document.getElementById('categoryFilter'),
+                    sortFilter: document.getElementById('sortFilter'),
+                    saveCurrentPreset: document.getElementById('saveCurrentPreset'),
+                    clearAllPresets: document.getElementById('clearAllPresets'),
+                    presetGrid: document.getElementById('presetGrid'),
+                    emptyLibrary: document.getElementById('emptyLibrary')
+                };
+            }
+
+            initializeEventListeners() {
+                // File upload
+                this.elements.dropZone.addEventListener('click', () => this.elements.fileInput.click());
+                this.elements.fileInput.addEventListener('change', (e) => this.handleFileSelect(e.target.files[0]));
+                
+                // Keyboard navigation for drop zone
+                this.elements.dropZone.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.elements.fileInput.click();
+                    }
+                });
+                
+                // Drag and drop
+                this.elements.dropZone.addEventListener('dragover', this.handleDragOver.bind(this));
+                this.elements.dropZone.addEventListener('dragleave', this.handleDragLeave.bind(this));
+                this.elements.dropZone.addEventListener('drop', this.handleDrop.bind(this));
+                
+                // Sliders with custom preset detection
+                this.elements.lowpassSlider.addEventListener('input', (e) => {
+                    this.elements.lowpassValue.textContent = e.target.value;
+                    this.checkForCustomPreset();
+                });
+                
+                this.elements.reverbSlider.addEventListener('input', (e) => {
+                    this.elements.reverbValue.textContent = e.target.value;
+                    this.checkForCustomPreset();
+                });
+                
+                this.elements.volumeSlider.addEventListener('input', (e) => {
+                    this.elements.volumeValue.textContent = e.target.value;
+                    this.checkForCustomPreset();
+                });
+                
+                this.elements.distortionSlider.addEventListener('input', (e) => {
+                    this.elements.distortionValue.textContent = e.target.value;
+                    this.checkForCustomPreset();
+                });
+                
+                // Buttons
+                this.elements.processBtn.addEventListener('click', this.processAudio.bind(this));
+                this.elements.resetBtn.addEventListener('click', this.reset.bind(this));
+                this.elements.downloadBtn.addEventListener('click', this.downloadProcessed.bind(this));
+                this.elements.playOriginal.addEventListener('click', this.toggleOriginalPlayback.bind(this));
+                this.elements.playProcessed.addEventListener('click', this.toggleProcessedPlayback.bind(this));
+                
+                // Global keyboard shortcuts
+                document.addEventListener('keydown', this.handleGlobalKeyboard.bind(this));
+                
+                // Preset buttons
+                this.elements.presetButtons.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const preset = e.target.dataset.preset;
+                        this.applyPreset(preset);
+                    });
+                });
+                
+                // Reset buttons
+                this.elements.resetButtons.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const parameter = e.target.dataset.reset;
+                        this.resetParameter(parameter);
+                    });
+                });
+                
+                // Advanced controls
+                if (this.elements.themeToggle) {
+                    this.elements.themeToggle.addEventListener('click', this.toggleHighContrast.bind(this));
+                }
+                
+                if (this.elements.syncPlayBtn) {
+                    this.elements.syncPlayBtn.addEventListener('click', this.toggleSyncPlay.bind(this));
+                }
+                
+                if (this.elements.abToggleBtn) {
+                    this.elements.abToggleBtn.addEventListener('click', this.toggleAB.bind(this));
+                }
+                
+                if (this.elements.sharePresetBtn) {
+                    this.elements.sharePresetBtn.addEventListener('click', this.shareCurrentPreset.bind(this));
+                }
+                
+                if (this.elements.libraryBtn) {
+                    this.elements.libraryBtn.addEventListener('click', this.openPresetLibrary.bind(this));
+                }
+                
+                // Preset library modal events
+                if (this.elements.closeLibrary) {
+                    this.elements.closeLibrary.addEventListener('click', this.closePresetLibrary.bind(this));
+                }
+                
+                if (this.elements.presetLibraryModal) {
+                    this.elements.presetLibraryModal.addEventListener('click', (e) => {
+                        if (e.target === this.elements.presetLibraryModal) {
+                            this.closePresetLibrary();
+                        }
+                    });
+                }
+                
+                if (this.elements.presetSearch) {
+                    this.elements.presetSearch.addEventListener('input', this.handleLibrarySearch.bind(this));
+                }
+                
+                if (this.elements.categoryFilter) {
+                    this.elements.categoryFilter.addEventListener('change', this.handleLibraryFilter.bind(this));
+                }
+                
+                if (this.elements.sortFilter) {
+                    this.elements.sortFilter.addEventListener('change', this.handleLibrarySort.bind(this));
+                }
+                
+                if (this.elements.saveCurrentPreset) {
+                    this.elements.saveCurrentPreset.addEventListener('click', this.saveCurrentAsPreset.bind(this));
+                }
+                
+                if (this.elements.clearAllPresets) {
+                    this.elements.clearAllPresets.addEventListener('click', this.clearAllPresets.bind(this));
+                }
+                
+                if (this.elements.balanceSlider) {
+                    this.elements.balanceSlider.addEventListener('input', this.updateBalance.bind(this));
+                }
+                
+                // Waveform scrubbing
+                this.elements.waveformContainers.forEach(container => {
+                    container.addEventListener('click', this.handleWaveformClick.bind(this));
+                    container.addEventListener('mousemove', this.handleWaveformHover.bind(this));
+                    container.addEventListener('mouseleave', this.handleWaveformLeave.bind(this));
+                    
+                    // Touch support for mobile
+                    container.addEventListener('touchstart', this.handleWaveformTouch.bind(this));
+                    container.addEventListener('touchmove', this.handleWaveformTouch.bind(this));
+                });
+                
+                // Real-time preview controls
+                if (this.elements.realtimeToggle) {
+                    this.elements.realtimeToggle.addEventListener('click', this.toggleRealtimePreview.bind(this));
+                }
+                
+                if (this.elements.previewDurationSlider) {
+                    this.elements.previewDurationSlider.addEventListener('input', (e) => {
+                        this.previewDuration = parseFloat(e.target.value);
+                        this.elements.previewDurationValue.textContent = e.target.value;
+                        if (this.realtimeEnabled) {
+                            this.updateRealtimePreview();
+                        }
+                    });
+                }
+                
+                // Smart preset buttons
+                this.elements.smartPresetButtons.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const presetId = e.currentTarget.dataset.preset;
+                        this.applySmartPreset(presetId);
+                    });
+                });
+                
+                // Parameter change listeners for real-time preview
+                if (this.elements.lowpassSlider) {
+                    this.elements.lowpassSlider.addEventListener('input', () => {
+                        if (this.realtimeEnabled) {
+                            this.updateRealtimePreview();
+                        }
+                    });
+                }
+                
+                if (this.elements.reverbSlider) {
+                    this.elements.reverbSlider.addEventListener('input', () => {
+                        if (this.realtimeEnabled) {
+                            this.updateRealtimePreview();
+                        }
+                    });
+                }
+                
+                if (this.elements.volumeSlider) {
+                    this.elements.volumeSlider.addEventListener('input', () => {
+                        if (this.realtimeEnabled) {
+                            this.updateRealtimePreview();
+                        }
+                    });
+                }
+                
+                if (this.elements.distortionSlider) {
+                    this.elements.distortionSlider.addEventListener('input', () => {
+                        if (this.realtimeEnabled) {
+                            this.updateRealtimePreview();
+                        }
+                    });
+                }
+            }
+
+            handleGlobalKeyboard(e) {
+                // Only handle shortcuts when not typing in inputs
+                if (e.target.tagName === 'INPUT' && e.target.type === 'range') {
+                    return; // Let sliders handle their own keyboard events
+                }
+                
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    return; // Don't interfere with text inputs
+                }
+
+                switch (e.key) {
+                    case ' ': // Spacebar for play/pause
+                        if (this.originalAudioElement || this.processedAudioElement) {
+                            e.preventDefault();
+                            // Toggle the last active player or original if none
+                            if (this.processedAudioElement && !this.processedAudioElement.paused) {
+                                this.toggleProcessedPlayback();
+                            } else if (this.originalAudioElement && !this.originalAudioElement.paused) {
+                                this.toggleOriginalPlayback();
+                            } else if (this.originalAudioElement) {
+                                this.toggleOriginalPlayback();
+                            }
+                        }
+                        break;
+                    case 'Enter':
+                        if (e.ctrlKey || e.metaKey) { // Ctrl/Cmd + Enter for process
+                            e.preventDefault();
+                            if (this.originalBuffer && !this.isProcessing) {
+                                this.processAudio();
+                            }
+                        }
+                        break;
+                    case 'Escape':
+                        // Reset/cancel operation
+                        if (this.isProcessing) {
+                            e.preventDefault();
+                            // Could add cancel functionality here
+                        }
+                        break;
+                    case '1':
+                    case '2':
+                        if (e.altKey && (this.originalAudioElement || this.processedAudioElement)) {
+                            e.preventDefault();
+                            if (e.key === '1' && this.originalAudioElement) {
+                                this.toggleOriginalPlayback();
+                            } else if (e.key === '2' && this.processedAudioElement) {
+                                this.toggleProcessedPlayback();
+                            }
+                        }
+                        break;
+                    case 's':
+                        if (e.ctrlKey || e.metaKey) { // Ctrl/Cmd + S for sync play
+                            e.preventDefault();
+                            if (this.originalAudioElement && this.processedAudioElement) {
+                                this.toggleSyncPlay();
+                            }
+                        }
+                        break;
+                    case 'b':
+                        if (e.altKey) { // Alt + B for A/B toggle
+                            e.preventDefault();
+                            if (this.originalAudioElement && this.processedAudioElement) {
+                                this.toggleAB();
+                            }
+                        }
+                        break;
+                    case 'h':
+                        if (e.ctrlKey || e.metaKey) { // Ctrl/Cmd + H for high contrast
+                            e.preventDefault();
+                            this.toggleHighContrast();
+                        }
+                        break;
+                }
+            }
+
+            applyPreset(presetName) {
+                this.currentPreset = presetName;
+                
+                // Update active state of preset buttons
+                this.elements.presetButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.preset === presetName);
+                });
+                
+                // Apply preset values if not custom
+                if (presetName !== 'custom' && this.presets[presetName]) {
+                    const preset = this.presets[presetName];
+                    
+                    // Update sliders with animation
+                    this.updateSlider('lowpassSlider', 'lowpassValue', preset.lowpass, 'Hz');
+                    this.updateSlider('reverbSlider', 'reverbValue', preset.reverb, '%');
+                    this.updateSlider('volumeSlider', 'volumeValue', preset.volume, '%');
+                    this.updateSlider('distortionSlider', 'distortionValue', preset.distortion, '%');
+                    
+                    // Announce change to screen readers
+                    this.announceToScreenReader(`Applied ${presetName} preset`);
+                }
+            }
+
+            updateSlider(sliderId, valueId, value, unit) {
+                const slider = document.getElementById(sliderId);
+                const valueElement = document.getElementById(valueId);
+                
+                if (slider && valueElement) {
+                    slider.value = value;
+                    valueElement.textContent = value;
+                    
+                    // Add visual feedback
+                    slider.style.transition = 'all 0.3s ease';
+                    setTimeout(() => {
+                        slider.style.transition = '';
+                    }, 300);
+                }
+            }
+
+            resetParameter(parameter) {
+                if (this.defaults[parameter] !== undefined) {
+                    const value = this.defaults[parameter];
+                    
+                    switch (parameter) {
+                        case 'lowpass':
+                            this.updateSlider('lowpassSlider', 'lowpassValue', value, 'Hz');
+                            break;
+                        case 'reverb':
+                            this.updateSlider('reverbSlider', 'reverbValue', value, '%');
+                            break;
+                        case 'volume':
+                            this.updateSlider('volumeSlider', 'volumeValue', value, '%');
+                            break;
+                        case 'distortion':
+                            this.updateSlider('distortionSlider', 'distortionValue', value, '%');
+                            break;
+                    }
+                    
+                    // Switch to custom preset when individual parameters are reset
+                    this.applyPreset('custom');
+                    
+                    // Announce change to screen readers
+                    this.announceToScreenReader(`Reset ${parameter} to default value`);
+                }
+            }
+
+            checkForCustomPreset() {
+                // Only switch to custom if we're not already applying a preset
+                if (this.currentPreset === 'custom') return;
+                
+                const currentValues = {
+                    lowpass: parseInt(this.elements.lowpassSlider.value),
+                    reverb: parseInt(this.elements.reverbSlider.value),
+                    volume: parseInt(this.elements.volumeSlider.value),
+                    distortion: parseInt(this.elements.distortionSlider.value)
+                };
+                
+                // Check if current values match any preset
+                let matchesPreset = false;
+                for (const [presetName, presetValues] of Object.entries(this.presets)) {
+                    if (presetName === 'custom' || !presetValues) continue;
+                    
+                    if (currentValues.lowpass === presetValues.lowpass &&
+                        currentValues.reverb === presetValues.reverb &&
+                        currentValues.volume === presetValues.volume &&
+                        currentValues.distortion === presetValues.distortion) {
+                        matchesPreset = true;
+                        break;
+                    }
+                }
+                
+                // If values don't match any preset, switch to custom
+                if (!matchesPreset) {
+                    this.applyPreset('custom');
+                }
+            }
+
+            // Advanced Features Methods
+            toggleHighContrast() {
+                this.isHighContrast = !this.isHighContrast;
+                document.body.classList.toggle('high-contrast', this.isHighContrast);
+                
+                // Update theme toggle button
+                if (this.elements.themeToggle) {
+                    this.elements.themeToggle.textContent = this.isHighContrast ? '🌞' : '🌓';
+                    this.elements.themeToggle.setAttribute('title', 
+                        this.isHighContrast ? 'Switch to normal theme' : 'Switch to high contrast mode'
+                    );
+                }
+                
+                // Announce change
+                this.announceToScreenReader(
+                    `${this.isHighContrast ? 'Enabled' : 'Disabled'} high contrast theme`
+                );
+                
+                // Save preference
+                localStorage.setItem('hiddenPartyEchoes_highContrast', this.isHighContrast);
+            }
+
+            toggleSyncPlay() {
+                if (!this.originalAudioElement || !this.processedAudioElement) return;
+
+                this.syncMode = !this.syncMode;
+                this.elements.syncPlayBtn.classList.toggle('active', this.syncMode);
+
+                if (this.syncMode) {
+                    // Sync both audio elements
+                    const currentTime = Math.max(
+                        this.originalAudioElement.currentTime || 0,
+                        this.processedAudioElement.currentTime || 0
+                    );
+                    
+                    this.originalAudioElement.currentTime = currentTime;
+                    this.processedAudioElement.currentTime = currentTime;
+                    
+                    // Play both
+                    this.originalAudioElement.play();
+                    this.processedAudioElement.play();
+                    
+                    // Update button states
+                    this.elements.playOriginal.textContent = '⏸️';
+                    this.elements.playProcessed.textContent = '⏸️';
+                    
+                    // Sync playback position
+                    this.syncAudioElements();
+                    
+                    this.announceToScreenReader('Started synchronized playback');
+                } else {
+                    // Stop sync mode
+                    this.originalAudioElement.pause();
+                    this.processedAudioElement.pause();
+                    
+                    this.elements.playOriginal.textContent = '▶️';
+                    this.elements.playProcessed.textContent = '▶️';
+                    
+                    this.announceToScreenReader('Stopped synchronized playback');
+                }
+            }
+
+            syncAudioElements() {
+                if (!this.syncMode || !this.originalAudioElement || !this.processedAudioElement) return;
+
+                const syncInterval = setInterval(() => {
+                    if (!this.syncMode || 
+                        this.originalAudioElement.paused && this.processedAudioElement.paused) {
+                        clearInterval(syncInterval);
+                        return;
+                    }
+
+                    // Keep audio elements synchronized
+                    const originalTime = this.originalAudioElement.currentTime;
+                    const processedTime = this.processedAudioElement.currentTime;
+                    const timeDiff = Math.abs(originalTime - processedTime);
+
+                    if (timeDiff > 0.1) { // 100ms tolerance
+                        const targetTime = Math.max(originalTime, processedTime);
+                        this.originalAudioElement.currentTime = targetTime;
+                        this.processedAudioElement.currentTime = targetTime;
+                    }
+                }, 100);
+            }
+
+            toggleAB() {
+                if (!this.originalAudioElement || !this.processedAudioElement) return;
+
+                // Stop current playback
+                this.originalAudioElement.pause();
+                this.processedAudioElement.pause();
+                
+                // Toggle state
+                this.abToggleState = this.abToggleState === 'original' ? 'processed' : 'original';
+                
+                // Update button state
+                this.elements.abToggleBtn.classList.toggle('active', this.abToggleState === 'processed');
+                
+                // Play the selected version
+                const currentTime = this.abToggleState === 'original' ? 
+                    this.processedAudioElement.currentTime : this.originalAudioElement.currentTime;
+                
+                if (this.abToggleState === 'original') {
+                    this.originalAudioElement.currentTime = currentTime;
+                    this.originalAudioElement.play();
+                    this.elements.playOriginal.textContent = '⏸️';
+                    this.elements.playProcessed.textContent = '▶️';
+                } else {
+                    this.processedAudioElement.currentTime = currentTime;
+                    this.processedAudioElement.play();
+                    this.elements.playProcessed.textContent = '⏸️';
+                    this.elements.playOriginal.textContent = '▶️';
+                }
+                
+                this.announceToScreenReader(`Switched to ${this.abToggleState} audio`);
+            }
+
+            updateBalance(e) {
+                const balance = parseInt(e.target.value);
+                
+                if (this.originalAudioElement) {
+                    this.originalAudioElement.volume = (100 - balance) / 100;
+                }
+                
+                if (this.processedAudioElement) {
+                    this.processedAudioElement.volume = balance / 100;
+                }
+            }
+
+            handleWaveformClick(e) {
+                const container = e.currentTarget;
+                const audioType = container.dataset.audio;
+                const rect = container.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const percentage = clickX / rect.width;
+                
+                const audioElement = audioType === 'original' ? 
+                    this.originalAudioElement : this.processedAudioElement;
+                
+                if (audioElement && audioElement.duration) {
+                    const newTime = percentage * audioElement.duration;
+                    audioElement.currentTime = newTime;
+                    
+                    // If in sync mode, update both
+                    if (this.syncMode) {
+                        this.originalAudioElement.currentTime = newTime;
+                        this.processedAudioElement.currentTime = newTime;
+                    }
+                }
+            }
+
+            handleWaveformHover(e) {
+                const container = e.currentTarget;
+                const rect = container.getBoundingClientRect();
+                const hoverX = e.clientX - rect.left;
+                const percentage = Math.max(0, Math.min(1, hoverX / rect.width));
+                
+                const scrubber = container.querySelector('.waveform-scrubber');
+                if (scrubber) {
+                    scrubber.style.left = `${percentage * 100}%`;
+                }
+            }
+
+            handleWaveformLeave(e) {
+                const scrubber = e.currentTarget.querySelector('.waveform-scrubber');
+                if (scrubber) {
+                    scrubber.style.left = '-10px'; // Hide scrubber
+                }
+            }
+
+            handleWaveformTouch(e) {
+                e.preventDefault();
+                const touch = e.touches[0] || e.changedTouches[0];
+                const container = e.currentTarget;
+                const rect = container.getBoundingClientRect();
+                const touchX = touch.clientX - rect.left;
+                const percentage = Math.max(0, Math.min(1, touchX / rect.width));
+                
+                const audioType = container.dataset.audio;
+                const audioElement = audioType === 'original' ? 
+                    this.originalAudioElement : this.processedAudioElement;
+                
+                if (audioElement && audioElement.duration) {
+                    const newTime = percentage * audioElement.duration;
+                    audioElement.currentTime = newTime;
+                    
+                    // If in sync mode, update both
+                    if (this.syncMode) {
+                        this.originalAudioElement.currentTime = newTime;
+                        this.processedAudioElement.currentTime = newTime;
+                    }
+                }
+                
+                // Update scrubber position
+                const scrubber = container.querySelector('.waveform-scrubber');
+                if (scrubber) {
+                    scrubber.style.left = `${percentage * 100}%`;
+                }
+            }
+
+            loadUserPreferences() {
+                // Load high contrast preference
+                const savedHighContrast = localStorage.getItem('hiddenPartyEchoes_highContrast');
+                if (savedHighContrast === 'true') {
+                    this.toggleHighContrast();
+                }
+            }
+
+            async initializeAudioContext() {
+                try {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    // Safari requires user interaction to start audio context
+                    if (this.audioContext.state === 'suspended') {
+                        // Add a one-time click listener to resume the context
+                        const resumeContext = async () => {
+                            if (this.audioContext.state === 'suspended') {
+                                try {
+                                    await this.audioContext.resume();
+                                    console.log('AudioContext resumed after user interaction');
+                                } catch (error) {
+                                    console.error('Failed to resume AudioContext:', error);
+                                }
+                            }
+                            document.removeEventListener('click', resumeContext);
+                        };
+                        document.addEventListener('click', resumeContext);
+                    }
+                } catch (error) {
+                    this.showError('Web Audio API not supported in this browser');
+                    console.error('AudioContext initialization failed:', error);
+                }
+            }
+
+            initializeVisualization() {
+                if (!this.audioContext || !this.elements.frequencyCanvas || !this.elements.waveformCanvas) {
+                    console.warn('Cannot initialize visualization: missing dependencies');
+                    return;
+                }
+
+                try {
+                    // Create analyser node
+                    this.analyser = this.audioContext.createAnalyser();
+                    this.analyser.fftSize = 1024; // 512 frequency bins
+                    this.analyser.smoothingTimeConstant = 0.8;
+                    
+                    // Initialize data arrays
+                    this.frequencyData = new Uint8Array(this.analyser.frequencyBinCount);
+                    this.timeData = new Uint8Array(this.analyser.fftSize);
+                    
+                    // Get canvas contexts
+                    this.frequencyCtx = this.elements.frequencyCanvas.getContext('2d');
+                    this.waveformCtx = this.elements.waveformCanvas.getContext('2d');
+                    
+                    // Set canvas dimensions to match CSS
+                    this.resizeCanvases();
+                    
+                    // Setup resize listener for responsive behavior
+                    window.addEventListener('resize', () => this.resizeCanvases());
+                    
+                } catch (error) {
+                    console.error('Visualization initialization failed:', error);
+                }
+            }
+
+            resizeCanvases() {
+                // Get actual displayed size
+                const freqRect = this.elements.frequencyCanvas.getBoundingClientRect();
+                const waveRect = this.elements.waveformCanvas.getBoundingClientRect();
+                
+                // Set canvas resolution to match display size for crisp rendering
+                this.elements.frequencyCanvas.width = freqRect.width * window.devicePixelRatio;
+                this.elements.frequencyCanvas.height = freqRect.height * window.devicePixelRatio;
+                this.elements.waveformCanvas.width = waveRect.width * window.devicePixelRatio;
+                this.elements.waveformCanvas.height = waveRect.height * window.devicePixelRatio;
+                
+                // Scale context to ensure correct drawing operations
+                this.frequencyCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+                this.waveformCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+                
+                // Set CSS size
+                this.elements.frequencyCanvas.style.width = freqRect.width + 'px';
+                this.elements.frequencyCanvas.style.height = freqRect.height + 'px';
+                this.elements.waveformCanvas.style.width = waveRect.width + 'px';
+                this.elements.waveformCanvas.style.height = waveRect.height + 'px';
+            }
+
+            startVisualization() {
+                if (!this.analyser || this.isVisualizationActive) return;
+                
+                this.isVisualizationActive = true;
+                this.renderVisualization();
+            }
+
+            stopVisualization() {
+                this.isVisualizationActive = false;
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                    this.animationId = null;
+                }
+                
+                // Clear canvases
+                if (this.frequencyCtx && this.waveformCtx) {
+                    const freqRect = this.elements.frequencyCanvas.getBoundingClientRect();
+                    const waveRect = this.elements.waveformCanvas.getBoundingClientRect();
+                    this.frequencyCtx.clearRect(0, 0, freqRect.width, freqRect.height);
+                    this.waveformCtx.clearRect(0, 0, waveRect.width, waveRect.height);
+                }
+            }
+
+            renderVisualization() {
+                if (!this.isVisualizationActive || !this.analyser) return;
+                
+                // Get audio data
+                this.analyser.getByteFrequencyData(this.frequencyData);
+                this.analyser.getByteTimeDomainData(this.timeData);
+                
+                // Render frequency spectrum
+                this.renderFrequencySpectrum();
+                
+                // Render waveform
+                this.renderWaveform();
+                
+                // Schedule next frame (60 FPS)
+                this.animationId = requestAnimationFrame(() => this.renderVisualization());
+            }
+
+            renderFrequencySpectrum() {
+                const canvas = this.elements.frequencyCanvas;
+                const ctx = this.frequencyCtx;
+                const rect = canvas.getBoundingClientRect();
+                const width = rect.width;
+                const height = rect.height;
+                
+                // Clear canvas
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(0, 0, width, height);
+                
+                if (!this.frequencyData) return;
+                
+                const barWidth = width / this.frequencyData.length;
+                
+                // Create gradient for bars
+                const gradient = ctx.createLinearGradient(0, height, 0, 0);
+                gradient.addColorStop(0, '#667eea');
+                gradient.addColorStop(0.5, '#764ba2');
+                gradient.addColorStop(1, '#06b6d4');
+                
+                // Draw frequency bars
+                for (let i = 0; i < this.frequencyData.length; i++) {
+                    const barHeight = (this.frequencyData[i] / 255) * height * 0.8;
+                    const x = i * barWidth;
+                    const y = height - barHeight;
+                    
+                    // Add glow effect for high frequencies
+                    if (this.frequencyData[i] > 100) {
+                        ctx.shadowColor = '#06b6d4';
+                        ctx.shadowBlur = 3;
+                    } else {
+                        ctx.shadowBlur = 0;
+                    }
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(x, y, barWidth - 1, barHeight);
+                }
+                
+                // Reset shadow
+                ctx.shadowBlur = 0;
+                
+                // Add frequency labels (optional grid lines)
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([2, 2]);
+                
+                // Draw grid lines for frequency ranges
+                const lowEnd = this.frequencyData.length * 0.2;  // ~2kHz
+                const midEnd = this.frequencyData.length * 0.6;  // ~6kHz
+                
+                ctx.beginPath();
+                ctx.moveTo(lowEnd * barWidth, 0);
+                ctx.lineTo(lowEnd * barWidth, height);
+                ctx.moveTo(midEnd * barWidth, 0);
+                ctx.lineTo(midEnd * barWidth, height);
+                ctx.stroke();
+                
+                ctx.setLineDash([]);
+            }
+
+            renderWaveform() {
+                const canvas = this.elements.waveformCanvas;
+                const ctx = this.waveformCtx;
+                const rect = canvas.getBoundingClientRect();
+                const width = rect.width;
+                const height = rect.height;
+                
+                // Clear canvas
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(0, 0, width, height);
+                
+                if (!this.timeData) return;
+                
+                // Draw center line
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([2, 2]);
+                ctx.beginPath();
+                ctx.moveTo(0, height / 2);
+                ctx.lineTo(width, height / 2);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Draw waveform
+                ctx.strokeStyle = '#06b6d4';
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                
+                // Add glow effect
+                ctx.shadowColor = '#06b6d4';
+                ctx.shadowBlur = 4;
+                
+                ctx.beginPath();
+                
+                const sliceWidth = width / this.timeData.length;
+                let x = 0;
+                
+                for (let i = 0; i < this.timeData.length; i++) {
+                    // Convert byte value (0-255) to -1 to 1 range
+                    const amplitude = (this.timeData[i] - 128) / 128.0;
+                    const y = (amplitude * height * 0.4) + height / 2;
+                    
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                    
+                    x += sliceWidth;
+                }
+                
+                ctx.stroke();
+                
+                // Reset shadow
+                ctx.shadowBlur = 0;
+                
+                // Add amplitude grid lines
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([1, 3]);
+                
+                // +0.5 and -0.5 amplitude lines
+                const quarterHeight = height * 0.25;
+                const threeQuarterHeight = height * 0.75;
+                
+                ctx.beginPath();
+                ctx.moveTo(0, quarterHeight);
+                ctx.lineTo(width, quarterHeight);
+                ctx.moveTo(0, threeQuarterHeight);
+                ctx.lineTo(width, threeQuarterHeight);
+                ctx.stroke();
+                
+                ctx.setLineDash([]);
+            }
+
+            connectAudioToAnalyser(audioElement) {
+                if (!this.analyser || !audioElement || !this.audioContext) return;
+                
+                try {
+                    // Create media element source if not already created
+                    if (!audioElement.sourceNode) {
+                        audioElement.sourceNode = this.audioContext.createMediaElementSource(audioElement);
+                        // Connect to both analyser and destination for passthrough
+                        audioElement.sourceNode.connect(this.analyser);
+                        audioElement.sourceNode.connect(this.audioContext.destination);
+                    }
+                    
+                    // Start visualization when audio plays
+                    audioElement.addEventListener('play', () => {
+                        this.startVisualization();
+                    });
+                    
+                    // Stop visualization when audio pauses or ends
+                    audioElement.addEventListener('pause', () => {
+                        this.stopVisualization();
+                    });
+                    
+                    audioElement.addEventListener('ended', () => {
+                        this.stopVisualization();
+                    });
+                    
+                } catch (error) {
+                    console.error('Failed to connect audio to analyser:', error);
+                }
+            }
+
+            cleanup() {
+                // Stop visualization
+                this.stopVisualization();
+                
+                // Clean up audio connections
+                if (this.originalAudioElement && this.originalAudioElement.sourceNode) {
+                    this.originalAudioElement.sourceNode.disconnect();
+                    this.originalAudioElement.sourceNode = null;
+                }
+                
+                if (this.processedAudioElement && this.processedAudioElement.sourceNode) {
+                    this.processedAudioElement.sourceNode.disconnect();
+                    this.processedAudioElement.sourceNode = null;
+                }
+                
+                // Clean up analyser
+                if (this.analyser) {
+                    this.analyser.disconnect();
+                    this.analyser = null;
+                }
+                
+                // Close audio context
+                if (this.audioContext && this.audioContext.state !== 'closed') {
+                    this.audioContext.close().catch(console.error);
+                }
+            }
+
+            // URL Parameter Sharing Methods
+            loadSharedPreset() {
+                const urlParams = new URLSearchParams(window.location.search);
+                
+                // Check if we have shared parameters
+                const hasSharedParams = urlParams.has('lowpass') || urlParams.has('reverb') || 
+                                      urlParams.has('volume') || urlParams.has('distortion');
+                
+                if (!hasSharedParams) return;
+                
+                // Load shared values
+                const sharedPreset = {
+                    lowpass: parseInt(urlParams.get('lowpass')) || this.defaults.lowpass,
+                    reverb: parseInt(urlParams.get('reverb')) || this.defaults.reverb,
+                    volume: parseInt(urlParams.get('volume')) || this.defaults.volume,
+                    distortion: parseInt(urlParams.get('distortion')) || this.defaults.distortion
+                };
+                
+                const presetName = urlParams.get('name') || 'Shared Preset';
+                
+                // Apply the shared preset
+                this.applyPreset('custom', sharedPreset);
+                
+                // Show notification about loaded preset
+                this.showSuccess(`Loaded shared preset: "${presetName}"`);
+                
+                // Clear URL parameters to keep URL clean (optional)
+                if (urlParams.get('autoload') !== 'false') {
+                    const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                    window.history.replaceState({}, document.title, cleanUrl);
+                }
+            }
+
+            generateShareableURL(presetName = null) {
+                const currentSettings = {
+                    lowpass: parseInt(this.elements.lowpassSlider.value),
+                    reverb: parseInt(this.elements.reverbSlider.value),
+                    volume: parseInt(this.elements.volumeSlider.value),
+                    distortion: parseInt(this.elements.distortionSlider.value)
+                };
+                
+                const baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                const params = new URLSearchParams();
+                
+                // Add preset parameters
+                params.set('lowpass', currentSettings.lowpass);
+                params.set('reverb', currentSettings.reverb);
+                params.set('volume', currentSettings.volume);
+                params.set('distortion', currentSettings.distortion);
+                
+                if (presetName) {
+                    params.set('name', presetName);
+                }
+                
+                return `${baseUrl}?${params.toString()}`;
+            }
+
+            async shareCurrentPreset() {
+                const presetName = prompt('Enter a name for this preset:', 'My Custom Preset');
+                if (!presetName) return;
+                
+                const shareUrl = this.generateShareableURL(presetName);
+                
+                // Try to use Web Share API if available
+                if (navigator.share) {
+                    try {
+                        await navigator.share({
+                            title: 'Hidden Party Echoes - Custom Preset',
+                            text: `Check out my custom audio preset: "${presetName}"`,
+                            url: shareUrl
+                        });
+                        this.showSuccess('Preset shared successfully!');
+                        return;
+                    } catch (error) {
+                        // Fall back to clipboard if share was cancelled
+                        if (error.name !== 'AbortError') {
+                            console.warn('Web Share API failed:', error);
+                        }
+                    }
+                }
+                
+                // Fallback: Copy to clipboard
+                try {
+                    await navigator.clipboard.writeText(shareUrl);
+                    this.showSuccess(`Preset URL copied to clipboard! Share: "${presetName}"`);
+                } catch (error) {
+                    // Final fallback: Show URL in prompt
+                    prompt('Copy this URL to share your preset:', shareUrl);
+                }
+            }
+
+            // Community Preset Storage System
+            saveCommunityPreset(presetData) {
+                const communityPresets = this.getCommunityPresets();
+                
+                // Create preset object with metadata
+                const preset = {
+                    id: Date.now().toString(),
+                    name: presetData.name,
+                    category: presetData.category || 'custom',
+                    settings: {
+                        lowpass: presetData.lowpass,
+                        reverb: presetData.reverb,
+                        volume: presetData.volume,
+                        distortion: presetData.distortion
+                    },
+                    rating: 0,
+                    ratingCount: 0,
+                    usageCount: 0,
+                    dateCreated: new Date().toISOString(),
+                    author: presetData.author || 'Anonymous'
+                };
+                
+                communityPresets.push(preset);
+                localStorage.setItem('communityPresets', JSON.stringify(communityPresets));
+                
+                return preset.id;
+            }
+
+            getCommunityPresets() {
+                try {
+                    const presets = localStorage.getItem('communityPresets');
+                    return presets ? JSON.parse(presets) : [];
+                } catch (error) {
+                    console.error('Error loading community presets:', error);
+                    return [];
+                }
+            }
+
+            ratePreset(presetId, rating) {
+                const communityPresets = this.getCommunityPresets();
+                const preset = communityPresets.find(p => p.id === presetId);
+                
+                if (preset) {
+                    // Simple rating system (new ratings are averaged with existing)
+                    const totalRating = (preset.rating * preset.ratingCount) + rating;
+                    preset.ratingCount += 1;
+                    preset.rating = totalRating / preset.ratingCount;
+                    
+                    localStorage.setItem('communityPresets', JSON.stringify(communityPresets));
+                    return preset.rating;
+                }
+                
+                return null;
+            }
+
+            incrementPresetUsage(presetId) {
+                const communityPresets = this.getCommunityPresets();
+                const preset = communityPresets.find(p => p.id === presetId);
+                
+                if (preset) {
+                    preset.usageCount += 1;
+                    localStorage.setItem('communityPresets', JSON.stringify(communityPresets));
+                }
+            }
+
+            deletePreset(presetId) {
+                const communityPresets = this.getCommunityPresets();
+                const filteredPresets = communityPresets.filter(p => p.id !== presetId);
+                localStorage.setItem('communityPresets', JSON.stringify(filteredPresets));
+            }
+
+            searchPresets(query, category = null) {
+                const communityPresets = this.getCommunityPresets();
+                
+                return communityPresets.filter(preset => {
+                    const matchesQuery = !query || preset.name.toLowerCase().includes(query.toLowerCase());
+                    const matchesCategory = !category || preset.category === category;
+                    return matchesQuery && matchesCategory;
+                });
+            }
+
+            getSortedPresets(sortBy = 'newest') {
+                const communityPresets = this.getCommunityPresets();
+                
+                switch (sortBy) {
+                    case 'popular':
+                        return communityPresets.sort((a, b) => b.usageCount - a.usageCount);
+                    case 'rating':
+                        return communityPresets.sort((a, b) => b.rating - a.rating);
+                    case 'oldest':
+                        return communityPresets.sort((a, b) => new Date(a.dateCreated) - new Date(b.dateCreated));
+                    case 'newest':
+                    default:
+                        return communityPresets.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
+                }
+            }
+
+            async saveCurrentAsPreset() {
+                const name = prompt('Enter a name for your preset:', 'My Awesome Preset');
+                if (!name) return;
+                
+                const categories = ['Party', 'Ambient', 'Dramatic', 'Subtle', 'Extreme', 'Custom'];
+                const category = prompt(`Choose a category:\n${categories.join(', ')}`, 'Custom');
+                
+                const presetData = {
+                    name: name,
+                    category: categories.includes(category) ? category : 'Custom',
+                    lowpass: parseInt(this.elements.lowpassSlider.value),
+                    reverb: parseInt(this.elements.reverbSlider.value),
+                    volume: parseInt(this.elements.volumeSlider.value),
+                    distortion: parseInt(this.elements.distortionSlider.value),
+                    author: 'You'
+                };
+                
+                const presetId = this.saveCommunityPreset(presetData);
+                this.showSuccess(`Preset "${name}" saved to your library!`);
+                
+                // Refresh preset library if it's open
+                if (this.isPresetLibraryOpen) {
+                    this.refreshPresetLibrary();
+                }
+                
+                return presetId;
+            }
+
+            // Preset Library UI Methods
+            openPresetLibrary() {
+                this.isPresetLibraryOpen = true;
+                this.elements.presetLibraryModal.style.display = 'flex';
+                this.refreshPresetLibrary();
+                
+                // Focus the search input for accessibility
+                setTimeout(() => {
+                    this.elements.presetSearch.focus();
+                }, 100);
+            }
+
+            closePresetLibrary() {
+                this.isPresetLibraryOpen = false;
+                this.elements.presetLibraryModal.style.display = 'none';
+            }
+
+            refreshPresetLibrary() {
+                const query = this.elements.presetSearch.value;
+                const category = this.elements.categoryFilter.value;
+                const sortBy = this.elements.sortFilter.value;
+                
+                let presets = this.searchPresets(query, category || null);
+                presets = this.sortPresets(presets, sortBy);
+                
+                this.renderPresets(presets);
+            }
+
+            sortPresets(presets, sortBy) {
+                switch (sortBy) {
+                    case 'popular':
+                        return presets.sort((a, b) => b.usageCount - a.usageCount);
+                    case 'rating':
+                        return presets.sort((a, b) => b.rating - a.rating);
+                    case 'oldest':
+                        return presets.sort((a, b) => new Date(a.dateCreated) - new Date(b.dateCreated));
+                    case 'newest':
+                    default:
+                        return presets.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
+                }
+            }
+
+            renderPresets(presets) {
+                if (presets.length === 0) {
+                    this.elements.presetGrid.style.display = 'none';
+                    this.elements.emptyLibrary.style.display = 'block';
+                    return;
+                }
+                
+                this.elements.presetGrid.style.display = 'grid';
+                this.elements.emptyLibrary.style.display = 'none';
+                
+                this.elements.presetGrid.innerHTML = presets.map(preset => {
+                    const stars = this.renderStars(preset.rating, preset.id);
+                    const formattedDate = new Date(preset.dateCreated).toLocaleDateString();
+                    
+                    return `
+                        <div class="preset-card" data-preset-id="${preset.id}">
+                            <div class="preset-header">
+                                <h3 class="preset-name">${this.escapeHtml(preset.name)}</h3>
+                                <span class="preset-category">${preset.category}</span>
+                            </div>
+                            
+                            <div class="preset-settings">
+                                <div>Muffle: ${preset.settings.lowpass}Hz</div>
+                                <div>Reverb: ${preset.settings.reverb}%</div>
+                                <div>Volume: -${preset.settings.volume}dB</div>
+                                <div>Distort: ${preset.settings.distortion}%</div>
+                            </div>
+                            
+                            <div class="preset-meta">
+                                <span>Used: ${preset.usageCount} times</span>
+                                <span>${formattedDate}</span>
+                            </div>
+                            
+                            <div class="preset-rating">
+                                ${stars}
+                                <span>(${preset.ratingCount})</span>
+                            </div>
+                            
+                            <div class="preset-actions">
+                                <button class="preset-action-btn apply" onclick="window.hiddenPartyEchoes.applyPresetFromLibrary('${preset.id}')">
+                                    ✨ Apply
+                                </button>
+                                <button class="preset-action-btn" onclick="window.hiddenPartyEchoes.sharePresetFromLibrary('${preset.id}')">
+                                    🔗 Share
+                                </button>
+                                <button class="preset-action-btn" onclick="window.hiddenPartyEchoes.deletePresetFromLibrary('${preset.id}')">
+                                    🗑️ Delete
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            renderStars(rating, presetId) {
+                const stars = [];
+                for (let i = 1; i <= 5; i++) {
+                    const filled = i <= Math.round(rating);
+                    stars.push(
+                        `<span class="star ${filled ? 'filled' : ''}" 
+                              onclick="window.hiddenPartyEchoes.ratePresetFromUI('${presetId}', ${i})">⭐</span>`
+                    );
+                }
+                return stars.join('');
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            handleLibrarySearch() {
+                this.refreshPresetLibrary();
+            }
+
+            handleLibraryFilter() {
+                this.refreshPresetLibrary();
+            }
+
+            handleLibrarySort() {
+                this.refreshPresetLibrary();
+            }
+
+            applyPresetFromLibrary(presetId) {
+                const presets = this.getCommunityPresets();
+                const preset = presets.find(p => p.id === presetId);
+                
+                if (preset) {
+                    this.applyPreset('custom', preset.settings);
+                    this.incrementPresetUsage(presetId);
+                    this.showSuccess(`Applied preset: "${preset.name}"`);
+                    this.closePresetLibrary();
+                }
+            }
+
+            sharePresetFromLibrary(presetId) {
+                const presets = this.getCommunityPresets();
+                const preset = presets.find(p => p.id === presetId);
+                
+                if (preset) {
+                    // Temporarily apply the preset to generate URL
+                    const originalSettings = {
+                        lowpass: parseInt(this.elements.lowpassSlider.value),
+                        reverb: parseInt(this.elements.reverbSlider.value),
+                        volume: parseInt(this.elements.volumeSlider.value),
+                        distortion: parseInt(this.elements.distortionSlider.value)
+                    };
+                    
+                    // Apply preset settings
+                    this.applyPreset('custom', preset.settings);
+                    
+                    // Generate share URL
+                    const shareUrl = this.generateShareableURL(preset.name);
+                    
+                    // Restore original settings
+                    this.applyPreset('custom', originalSettings);
+                    
+                    // Copy URL to clipboard
+                    navigator.clipboard.writeText(shareUrl).then(() => {
+                        this.showSuccess(`Preset "${preset.name}" URL copied to clipboard!`);
+                    }).catch(() => {
+                        prompt('Copy this URL to share the preset:', shareUrl);
+                    });
+                }
+            }
+
+            deletePresetFromLibrary(presetId) {
+                const presets = this.getCommunityPresets();
+                const preset = presets.find(p => p.id === presetId);
+                
+                if (preset && confirm(`Delete preset "${preset.name}"?`)) {
+                    this.deletePreset(presetId);
+                    this.refreshPresetLibrary();
+                    this.showSuccess('Preset deleted');
+                }
+            }
+
+            ratePresetFromUI(presetId, rating) {
+                const newRating = this.ratePreset(presetId, rating);
+                if (newRating !== null) {
+                    this.refreshPresetLibrary();
+                    this.showSuccess(`Rated ${rating} stars!`);
+                }
+            }
+
+            clearAllPresets() {
+                if (confirm('Delete ALL saved presets? This cannot be undone!')) {
+                    localStorage.removeItem('communityPresets');
+                    this.refreshPresetLibrary();
+                    this.showSuccess('All presets cleared');
+                }
+            }
+
+            handleDragOver(e) {
+                e.preventDefault();
+                this.elements.dropZone.classList.add('dragover');
+            }
+
+            handleDragLeave(e) {
+                e.preventDefault();
+                this.elements.dropZone.classList.remove('dragover');
+            }
+
+            handleDrop(e) {
+                e.preventDefault();
+                this.elements.dropZone.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    this.handleFileSelect(files[0]);
+                }
+            }
+
+            async handleFileSelect(file) {
+                if (!file) return;
+
+                // Validate file type
+                if (!file.type.startsWith('audio/')) {
+                    const fileExtension = file.name.split('.').pop()?.toLowerCase();
+                    const supportedFormats = ['mp3', 'wav', 'ogg', 'm4a', 'aac'];
+                    
+                    if (fileExtension && !supportedFormats.includes(fileExtension)) {
+                        this.showError(`File format "${fileExtension}" is not supported. Please use MP3, WAV, or OGG files.`, {
+                            fileName: file.name,
+                            fileType: file.type,
+                            fileExtension
+                        });
+                    } else {
+                        this.showError('Please select a valid audio file. Supported formats: MP3, WAV, OGG', {
+                            fileName: file.name,
+                            fileType: file.type
+                        });
+                    }
+                    return;
+                }
+
+                // Check file size (50MB limit)
+                const maxSize = 50 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+                    this.showError(`File size (${sizeMB}MB) exceeds the 50MB limit. Please compress or choose a smaller audio file.`, {
+                        fileSize: file.size,
+                        fileSizeMB: sizeMB,
+                        maxSizeMB: 50
+                    });
+                    return;
+                }
+
+                this.showLoading(true, 'Analyzing audio file...');
+                this.showInfo('Loading and analyzing your audio file...');
+
+                try {
+                    // Ensure audio context is ready
+                    if (this.audioContext.state === 'suspended') {
+                        await this.audioContext.resume();
+                    }
+
+                    const arrayBuffer = await file.arrayBuffer();
+                    
+                    // Try to decode audio data with better error handling
+                    try {
+                        this.originalBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+                    } catch (decodeError) {
+                        // If direct decoding fails, try with callback method for Safari compatibility
+                        console.warn('Direct decoding failed, trying callback method:', decodeError);
+                        
+                        this.originalBuffer = await new Promise((resolve, reject) => {
+                            this.audioContext.decodeAudioData(
+                                arrayBuffer.slice(0), // Create a copy of the buffer
+                                (buffer) => resolve(buffer),
+                                (error) => reject(error)
+                            );
+                        });
+                    }
+                    
+                    this.displayFileInfo(file, this.originalBuffer);
+                    this.initializeWaveforms();
+                    this.showControls(true);
+                    this.showSuccess('Audio file loaded successfully!');
+                    
+                } catch (error) {
+                    console.error('Audio decoding failed:', error);
+                    
+                    // Provide more specific error messages
+                    let errorMessage = 'Failed to load audio file.';
+                    if (error.name === 'EncodingError') {
+                        errorMessage = 'Audio file format not supported or corrupted. Try a different MP3, WAV, or OGG file.';
+                    } else if (error.name === 'NotSupportedError') {
+                        errorMessage = 'This audio format is not supported by your browser. Please try a standard MP3 or WAV file.';
+                    } else if (error.message && error.message.includes('decode')) {
+                        errorMessage = 'Unable to decode this audio file. The file may be corrupted or use an unsupported encoding.';
+                    }
+                    
+                    this.showError(errorMessage);
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            displayFileInfo(file, audioBuffer) {
+                this.elements.fileName.textContent = file.name;
+                this.elements.fileSize.textContent = this.formatFileSize(file.size);
+                this.elements.fileDuration.textContent = this.formatTime(audioBuffer.duration);
+                this.elements.fileSampleRate.textContent = `${audioBuffer.sampleRate} Hz`;
+                this.elements.fileInfo.style.display = 'block';
+            }
+
+            initializeWaveforms() {
+                // Use HTML5 audio controls with visual waveform placeholder
+                this.initializeBasicAudioControls();
+            }
+
+            initializeBasicAudioControls() {
+                // Create HTML5 audio elements with visual waveform representation
+                const originalContainer = document.getElementById('originalWaveform');
+                const originalBlob = this.audioBufferToBlob(this.originalBuffer);
+                const originalUrl = URL.createObjectURL(originalBlob);
+                
+                // Create a visual waveform representation
+                const waveformBars = this.createWaveformVisualization(this.originalBuffer);
+                
+                originalContainer.innerHTML = `
+                    <div style="background: linear-gradient(45deg, #667eea, #764ba2); height: 60px; border-radius: 5px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; position: relative; overflow: hidden;">
+                        ${waveformBars}
+                    </div>
+                    <audio controls style="width: 100%;">
+                        <source src="${originalUrl}" type="audio/wav">
+                        Your browser does not support the audio element.
+                    </audio>
+                `;
+                
+                // Set initial time display
+                const duration = this.formatTime(this.originalBuffer.duration);
+                this.elements.originalTime.textContent = `00:00 / ${duration}`;
+                
+                // Store the audio element for later use
+                this.originalAudioElement = originalContainer.querySelector('audio');
+                this.setupAudioTimeUpdates(this.originalAudioElement, this.elements.originalTime);
+            }
+
+            initializeProcessedWaveform() {
+                this.initializeProcessedBasicAudio();
+            }
+
+            initializeProcessedBasicAudio() {
+                // Create HTML5 audio elements with visual waveform representation
+                const processedContainer = document.getElementById('processedWaveform');
+                const processedBlob = this.audioBufferToBlob(this.processedBuffer);
+                const processedUrl = URL.createObjectURL(processedBlob);
+                
+                // Create a visual waveform representation
+                const waveformBars = this.createWaveformVisualization(this.processedBuffer);
+                
+                processedContainer.innerHTML = `
+                    <div style="background: linear-gradient(45deg, #28a745, #20c997); height: 60px; border-radius: 5px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; position: relative; overflow: hidden;">
+                        ${waveformBars}
+                    </div>
+                    <audio controls style="width: 100%;">
+                        <source src="${processedUrl}" type="audio/wav">
+                        Your browser does not support the audio element.
+                    </audio>
+                `;
+                
+                // Set initial time display
+                const duration = this.formatTime(this.processedBuffer.duration);
+                this.elements.processedTime.textContent = `00:00 / ${duration}`;
+                
+                // Store the audio element for later use
+                this.processedAudioElement = processedContainer.querySelector('audio');
+                this.setupAudioTimeUpdates(this.processedAudioElement, this.elements.processedTime);
+            }
+
+            createWaveformVisualization(audioBuffer) {
+                // Create an enhanced visual representation of the waveform
+                const channelData = audioBuffer.getChannelData(0);
+                const samples = 150; // Increased resolution
+                const barWidth = 100 / samples;
+                const step = Math.floor(channelData.length / samples);
+                
+                let bars = '';
+                let maxAmplitude = 0;
+                
+                // Find global max for normalization
+                for (let i = 0; i < channelData.length; i++) {
+                    maxAmplitude = Math.max(maxAmplitude, Math.abs(channelData[i]));
+                }
+                
+                for (let i = 0; i < samples; i++) {
+                    const start = i * step;
+                    const end = start + step;
+                    let max = 0;
+                    let rms = 0;
+                    
+                    // Calculate both peak and RMS for better visualization
+                    for (let j = start; j < end && j < channelData.length; j++) {
+                        const sample = Math.abs(channelData[j]);
+                        max = Math.max(max, sample);
+                        rms += sample * sample;
+                    }
+                    
+                    rms = Math.sqrt(rms / (end - start));
+                    
+                    // Normalize and convert to height percentage
+                    const normalizedMax = maxAmplitude > 0 ? max / maxAmplitude : 0;
+                    const normalizedRms = maxAmplitude > 0 ? rms / maxAmplitude : 0;
+                    
+                    const peakHeight = 15 + (normalizedMax * 70); // 15% to 85% of container
+                    const rmsHeight = 15 + (normalizedRms * 70);
+                    
+                    // Create layered visualization with peak and RMS
+                    bars += `
+                        <div style="
+                            position: absolute;
+                            left: ${i * barWidth}%;
+                            width: ${barWidth * 0.9}%;
+                            height: ${peakHeight}%;
+                            background: rgba(255,255,255,0.4);
+                            border-radius: 1px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            transition: all 0.2s ease;
+                        "></div>
+                        <div style="
+                            position: absolute;
+                            left: ${i * barWidth}%;
+                            width: ${barWidth * 0.9}%;
+                            height: ${rmsHeight}%;
+                            background: rgba(255,255,255,0.9);
+                            border-radius: 1px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            transition: all 0.2s ease;
+                        "></div>
+                    `;
+                }
+                
+                return bars;
+            }
+
+            setupAudioTimeUpdates(audioElement, timeDisplay) {
+                audioElement.addEventListener('timeupdate', () => {
+                    const current = this.formatTime(audioElement.currentTime);
+                    const total = this.formatTime(audioElement.duration || 0);
+                    timeDisplay.textContent = `${current} / ${total}`;
+                });
+                
+                // Connect to analyser for real-time visualization
+                this.connectAudioToAnalyser(audioElement);
+            }
+
+            async processAudio() {
+                if (!this.originalBuffer || this.isProcessing) return;
+
+                this.isProcessing = true;
+                this.elements.processBtn.disabled = true;
+                this.showLoading(true, 'Applying party room effects...');
+                this.showInfo('Transforming your audio with realistic room effects...');
+
+                try {
+                    // Get parameter values
+                    const lowpassFreq = parseInt(this.elements.lowpassSlider.value);
+                    const reverbAmount = parseInt(this.elements.reverbSlider.value) / 100;
+                    const volumeReduction = parseInt(this.elements.volumeSlider.value) / 100;
+                    const distortionAmount = parseInt(this.elements.distortionSlider.value) / 100;
+
+                    // Process the audio
+                    this.processedBuffer = await this.applyPartyRoomEffect(
+                        this.originalBuffer,
+                        lowpassFreq,
+                        reverbAmount,
+                        volumeReduction,
+                        distortionAmount
+                    );
+
+                    // Initialize processed waveform
+                    if (this.processedWaveSurfer) {
+                        this.processedWaveSurfer.destroy();
+                    }
+                    
+                    this.initializeProcessedWaveform();
+
+                    this.showPreview(true);
+                    this.elements.downloadBtn.disabled = false;
+                    this.showSuccess('Audio processing complete! Listen to the results below.');
+
+                } catch (error) {
+                    this.showError('Failed to process audio. Please try again.');
+                    console.error('Audio processing failed:', error);
+                } finally {
+                    this.isProcessing = false;
+                    this.elements.processBtn.disabled = false;
+                    this.showLoading(false);
+                }
+            }
+
+            async applyPartyRoomEffect(audioBuffer, lowpassFreq, reverbAmount, volumeReduction, distortionAmount) {
+                const offlineContext = new OfflineAudioContext(
+                    audioBuffer.numberOfChannels,
+                    audioBuffer.length,
+                    audioBuffer.sampleRate
+                );
+
+                // Create source
+                const source = offlineContext.createBufferSource();
+                source.buffer = audioBuffer;
+
+                // Create effects chain: source → lowpass → reverb → distortion → gain → destination
+                
+                // 1. Low-pass filter for muffling
+                const lowpass = offlineContext.createBiquadFilter();
+                lowpass.type = 'lowpass';
+                lowpass.frequency.value = lowpassFreq;
+                lowpass.Q.value = 1.5; // Slight resonance for character
+
+                // 2. Reverb simulation using delay
+                const delay = offlineContext.createDelay(0.3);
+                delay.delayTime.value = 0.05; // 50ms delay for room effect
+                
+                const delayGain = offlineContext.createGain();
+                delayGain.gain.value = reverbAmount * 0.3; // Scale reverb amount
+                
+                const feedback = offlineContext.createGain();
+                feedback.gain.value = reverbAmount * 0.2; // Feedback for reverb tail
+
+                // 3. Subtle distortion using wave shaper
+                const distortion = offlineContext.createWaveShaper();
+                if (distortionAmount > 0) {
+                    distortion.curve = this.createDistortionCurve(distortionAmount * 20); // Scale distortion
+                    distortion.oversample = '2x';
+                }
+
+                // 4. Volume reduction
+                const gainNode = offlineContext.createGain();
+                gainNode.gain.value = 1 - volumeReduction;
+
+                // 5. Additional high-frequency rolloff for more realistic wall effect
+                const highShelf = offlineContext.createBiquadFilter();
+                highShelf.type = 'highshelf';
+                highShelf.frequency.value = 2000;
+                highShelf.gain.value = -6; // -6dB above 2kHz
+
+                // Connect the audio graph
+                source.connect(lowpass);
+                lowpass.connect(highShelf);
+                
+                // Dry path
+                if (distortionAmount > 0) {
+                    highShelf.connect(distortion);
+                    distortion.connect(gainNode);
+                } else {
+                    highShelf.connect(gainNode);
+                }
+                
+                // Reverb path
+                if (reverbAmount > 0) {
+                    highShelf.connect(delay);
+                    delay.connect(delayGain);
+                    delay.connect(feedback);
+                    feedback.connect(delay); // Create feedback loop
+                    delayGain.connect(gainNode);
+                }
+                
+                gainNode.connect(offlineContext.destination);
+
+                // Start and render
+                source.start(0);
+                return await offlineContext.startRendering();
+            }
+
+            createDistortionCurve(amount) {
+                const samples = 44100;
+                const curve = new Float32Array(samples);
+                const deg = Math.PI / 180;
+                
+                for (let i = 0; i < samples; i++) {
+                    const x = (i * 2) / samples - 1;
+                    curve[i] = ((3 + amount) * x * 20 * deg) / (Math.PI + amount * Math.abs(x));
+                }
+                
+                return curve;
+            }
+
+            audioBufferToBlob(audioBuffer) {
+                const length = audioBuffer.length;
+                const sampleRate = audioBuffer.sampleRate;
+                const numberOfChannels = audioBuffer.numberOfChannels;
+                
+                // Create WAV file
+                const buffer = new ArrayBuffer(44 + length * numberOfChannels * 2);
+                const view = new DataView(buffer);
+                
+                // WAV header
+                const writeString = (offset, string) => {
+                    for (let i = 0; i < string.length; i++) {
+                        view.setUint8(offset + i, string.charCodeAt(i));
+                    }
+                };
+                
+                writeString(0, 'RIFF');
+                view.setUint32(4, 36 + length * numberOfChannels * 2, true);
+                writeString(8, 'WAVE');
+                writeString(12, 'fmt ');
+                view.setUint32(16, 16, true);
+                view.setUint16(20, 1, true);
+                view.setUint16(22, numberOfChannels, true);
+                view.setUint32(24, sampleRate, true);
+                view.setUint32(28, sampleRate * numberOfChannels * 2, true);
+                view.setUint16(32, numberOfChannels * 2, true);
+                view.setUint16(34, 16, true);
+                writeString(36, 'data');
+                view.setUint32(40, length * numberOfChannels * 2, true);
+                
+                // Convert float samples to 16-bit PCM
+                let offset = 44;
+                for (let i = 0; i < length; i++) {
+                    for (let channel = 0; channel < numberOfChannels; channel++) {
+                        const sample = Math.max(-1, Math.min(1, audioBuffer.getChannelData(channel)[i]));
+                        view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
+                        offset += 2;
+                    }
+                }
+                
+                return new Blob([buffer], { type: 'audio/wav' });
+            }
+
+            toggleOriginalPlayback() {
+                if (!this.originalAudioElement) return;
+                
+                if (!this.originalAudioElement.paused) {
+                    this.originalAudioElement.pause();
+                    this.elements.playOriginal.textContent = '▶️';
+                } else {
+                    // Stop processed if playing
+                    if (this.processedAudioElement && !this.processedAudioElement.paused) {
+                        this.processedAudioElement.pause();
+                        this.elements.playProcessed.textContent = '▶️';
+                    }
+                    
+                    this.originalAudioElement.play();
+                    this.elements.playOriginal.textContent = '⏸️';
+                    
+                    // Reset button when audio ends
+                    this.originalAudioElement.onended = () => {
+                        this.elements.playOriginal.textContent = '▶️';
+                    };
+                }
+            }
+
+            toggleProcessedPlayback() {
+                if (!this.processedAudioElement) return;
+                
+                if (!this.processedAudioElement.paused) {
+                    this.processedAudioElement.pause();
+                    this.elements.playProcessed.textContent = '▶️';
+                } else {
+                    // Stop original if playing
+                    if (this.originalAudioElement && !this.originalAudioElement.paused) {
+                        this.originalAudioElement.pause();
+                        this.elements.playOriginal.textContent = '▶️';
+                    }
+                    
+                    this.processedAudioElement.play();
+                    this.elements.playProcessed.textContent = '⏸️';
+                    
+                    // Reset button when audio ends
+                    this.processedAudioElement.onended = () => {
+                        this.elements.playProcessed.textContent = '▶️';
+                    };
+                }
+            }
+
+            downloadProcessed() {
+                if (!this.processedBuffer) return;
+                
+                const blob = this.audioBufferToBlob(this.processedBuffer);
+                const url = URL.createObjectURL(blob);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'hidden-party-echoes-processed.wav';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                this.showSuccess('Processed audio downloaded successfully!');
+            }
+
+            reset() {
+                // Stop and clean up visualization
+                this.stopVisualization();
+                
+                // Reset audio
+                this.originalBuffer = null;
+                this.processedBuffer = null;
+                
+                // Reset audio elements
+                this.originalAudioElement = null;
+                this.processedAudioElement = null;
+                
+                // Clear waveform containers
+                const originalContainer = document.getElementById('originalWaveform');
+                const processedContainer = document.getElementById('processedWaveform');
+                if (originalContainer) originalContainer.innerHTML = '';
+                if (processedContainer) processedContainer.innerHTML = '';
+                
+                // Reset UI
+                this.elements.fileInput.value = '';
+                this.showControls(false);
+                this.showPreview(false);
+                this.elements.fileInfo.style.display = 'none';
+                this.elements.downloadBtn.disabled = true;
+                this.hideStatus();
+                
+                // Reset play buttons
+                this.elements.playOriginal.textContent = '▶️';
+                this.elements.playProcessed.textContent = '▶️';
+                
+                // Reset time displays
+                this.elements.originalTime.textContent = '00:00 / 00:00';
+                this.elements.processedTime.textContent = '00:00 / 00:00';
+                
+                // Reset sliders
+                this.elements.lowpassSlider.value = 700;
+                this.elements.reverbSlider.value = 40;
+                this.elements.volumeSlider.value = 25;
+                this.elements.distortionSlider.value = 5;
+                
+                this.elements.lowpassValue.textContent = '700';
+                this.elements.reverbValue.textContent = '40';
+                this.elements.volumeValue.textContent = '25';
+                this.elements.distortionValue.textContent = '5';
+            }
+
+            // UI Helper Methods
+            showControls(show) {
+                if (show) {
+                    this.elements.controlsSection.style.display = 'block';
+                    this.elements.controlsSection.classList.add('slide-in');
+                    
+                    // Remove animation class after animation completes
+                    setTimeout(() => {
+                        this.elements.controlsSection.classList.remove('slide-in');
+                    }, 400);
+                } else {
+                    this.elements.controlsSection.style.display = 'none';
+                    this.elements.controlsSection.classList.remove('slide-in');
+                }
+            }
+
+            showPreview(show) {
+                if (show) {
+                    this.elements.previewSection.style.display = 'block';
+                    this.elements.previewSection.classList.add('fade-in');
+                    
+                    // Remove animation class after animation completes
+                    setTimeout(() => {
+                        this.elements.previewSection.classList.remove('fade-in');
+                    }, 300);
+                } else {
+                    this.elements.previewSection.style.display = 'none';
+                    this.elements.previewSection.classList.remove('fade-in');
+                }
+            }
+
+            showLoading(show, message = 'Processing audio...') {
+                this.elements.loadingIndicator.style.display = show ? 'block' : 'none';
+                if (show && this.elements.loadingText) {
+                    this.elements.loadingText.textContent = message;
+                }
+            }
+
+            showStatus(message, type) {
+                this.elements.statusMessage.textContent = message;
+                this.elements.statusMessage.className = `status-message status-${type}`;
+                this.elements.statusMessage.style.display = 'block';
+            }
+
+            showSuccess(message) {
+                this.showStatus(message, 'success');
+            }
+
+            showError(message, details = null) {
+                this.showStatus(message, 'error');
+                
+                // Add more detailed error information for accessibility
+                if (details) {
+                    console.error('Detailed error info:', details);
+                }
+                
+                // Announce error to screen readers
+                this.announceToScreenReader(`Error: ${message}`);
+            }
+
+            showInfo(message) {
+                this.showStatus(message, 'info');
+            }
+
+            hideStatus() {
+                this.elements.statusMessage.style.display = 'none';
+            }
+
+            announceToScreenReader(message) {
+                // Create a temporary live region for screen reader announcements
+                const announcement = document.createElement('div');
+                announcement.setAttribute('aria-live', 'assertive');
+                announcement.setAttribute('aria-atomic', 'true');
+                announcement.className = 'visually-hidden';
+                announcement.textContent = message;
+                
+                document.body.appendChild(announcement);
+                
+                // Remove after announcement
+                setTimeout(() => {
+                    if (document.body.contains(announcement)) {
+                        document.body.removeChild(announcement);
+                    }
+                }, 1000);
+            }
+
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            formatTime(seconds) {
+                if (isNaN(seconds)) return '00:00';
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = Math.floor(seconds % 60);
+                return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+            }
+
+            // Real-time preview methods
+            toggleRealtimePreview() {
+                this.realtimeEnabled = !this.realtimeEnabled;
+                this.elements.realtimeToggle.setAttribute('aria-checked', this.realtimeEnabled);
+                this.elements.realtimeToggle.classList.toggle('active', this.realtimeEnabled);
+                
+                if (this.realtimeEnabled) {
+                    this.elements.previewStatus.textContent = 'Preview: On';
+                    this.elements.previewStatus.className = 'preview-status active';
+                    this.updateRealtimePreview();
+                } else {
+                    this.elements.previewStatus.textContent = 'Preview: Off';
+                    this.elements.previewStatus.className = 'preview-status';
+                    if (this.processedAudioElement && !this.processedAudioElement.paused) {
+                        this.processedAudioElement.pause();
+                        this.elements.playProcessed.textContent = '▶️';
+                    }
+                }
+            }
+
+            async updateRealtimePreview() {
+                if (!this.originalBuffer || this.isPreviewProcessing || !this.realtimeEnabled) {
+                    return;
+                }
+
+                this.isPreviewProcessing = true;
+                this.elements.previewStatus.textContent = 'Processing...';
+                this.elements.previewStatus.className = 'preview-status processing';
+
+                try {
+                    // Get current playback position or start from beginning
+                    let startTime = 0;
+                    if (this.originalAudioElement && !this.originalAudioElement.paused) {
+                        startTime = this.originalAudioElement.currentTime;
+                    }
+
+                    // Create a smaller buffer for preview (based on duration setting)
+                    const sampleRate = this.originalBuffer.sampleRate;
+                    const startSample = Math.floor(startTime * sampleRate);
+                    const durationSamples = Math.floor(this.previewDuration * sampleRate);
+                    const endSample = Math.min(startSample + durationSamples, this.originalBuffer.length);
+
+                    if (startSample >= this.originalBuffer.length) {
+                        startTime = 0; // Reset to beginning if at end
+                        startSample = 0;
+                    }
+
+                    // Create preview buffer
+                    const previewLength = endSample - startSample;
+                    const previewBuffer = this.audioContext.createBuffer(
+                        this.originalBuffer.numberOfChannels,
+                        previewLength,
+                        sampleRate
+                    );
+
+                    for (let channel = 0; channel < this.originalBuffer.numberOfChannels; channel++) {
+                        const originalData = this.originalBuffer.getChannelData(channel);
+                        const previewData = previewBuffer.getChannelData(channel);
+                        for (let i = 0; i < previewLength; i++) {
+                            previewData[i] = originalData[startSample + i];
+                        }
+                    }
+
+                    // Process the preview buffer
+                    const processedPreview = await this.processAudioBuffer(
+                        previewBuffer,
+                        parseFloat(this.elements.lowpassSlider.value),
+                        parseFloat(this.elements.reverbSlider.value) / 100,
+                        parseFloat(this.elements.volumeSlider.value) / 100,
+                        parseFloat(this.elements.distortionSlider.value) / 100
+                    );
+
+                    // Create blob and update preview
+                    this.previewBuffer = processedPreview;
+                    const blob = this.audioBufferToBlob(processedPreview);
+                    const url = URL.createObjectURL(blob);
+
+                    // Update processed audio element for preview
+                    if (this.processedAudioElement) {
+                        this.processedAudioElement.src = url;
+                        this.processedAudioElement.load();
+                    }
+
+                    this.elements.previewStatus.textContent = 'Preview: Ready';
+                    this.elements.previewStatus.className = 'preview-status active';
+                } catch (error) {
+                    console.error('Real-time preview error:', error);
+                    this.elements.previewStatus.textContent = 'Preview: Error';
+                    this.elements.previewStatus.className = 'preview-status error';
+                } finally {
+                    this.isPreviewProcessing = false;
+                }
+            }
+
+            // Smart presets methods
+            applySmartPreset(presetId) {
+                const preset = this.smartPresets[presetId];
+                if (!preset) return;
+
+                // Apply the preset settings
+                const { lowpass, reverb, volume, distortion } = preset.settings;
+                
+                this.elements.lowpassSlider.value = lowpass;
+                this.elements.lowpassValue.textContent = lowpass;
+                
+                this.elements.reverbSlider.value = reverb;
+                this.elements.reverbValue.textContent = reverb;
+                
+                this.elements.volumeSlider.value = volume;
+                this.elements.volumeValue.textContent = volume;
+                
+                this.elements.distortionSlider.value = distortion;
+                this.elements.distortionValue.textContent = distortion;
+
+                // Update preset selection UI
+                this.elements.smartPresetButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.preset === presetId) {
+                        btn.classList.add('active');
+                    }
+                });
+
+                // Update current preset
+                this.currentPreset = 'custom';
+                this.updatePresetSelection();
+
+                // Show status message
+                this.showStatusMessage(`Applied "${preset.name}" preset`, 'success', 2000);
+
+                // If real-time preview is enabled, update it
+                if (this.realtimeEnabled) {
+                    setTimeout(() => this.updateRealtimePreview(), 100);
+                }
+            }
+        }
+
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.hiddenPartyEchoes = new HiddenPartyEchoes();
+        });
+
+        // Handle browser compatibility
+        window.addEventListener('load', () => {
+            if (!window.AudioContext && !window.webkitAudioContext) {
+                document.querySelector('.container').innerHTML = `
+                    <div style="text-align: center; padding: 50px;">
+                        <h2>Browser Not Supported</h2>
+                        <p>This application requires Web Audio API support.</p>
+                        <p>Please use Chrome, Firefox, or another modern browser.</p>
+                    </div>
+                `;
+            }
+        });
+
+        // Cleanup on page unload to prevent memory leaks
+        window.addEventListener('beforeunload', () => {
+            if (window.hiddenPartyEchoes) {
+                window.hiddenPartyEchoes.cleanup();
+            }
+        });
+    </script>
+</body>
+</html>
